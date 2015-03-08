@@ -6,6 +6,7 @@
 #endregion
 namespace ArxOne.OneFilesystem.Protocols
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -157,6 +158,8 @@ namespace ArxOne.OneFilesystem.Protocols
             }
         }
 
+        private readonly HashSet<Tuple<string, int?>> _avoidGetObjectInfo = new HashSet<Tuple<string, int?>>();
+
         /// <summary>
         /// Gets the information about the referenced file.
         /// </summary>
@@ -169,7 +172,21 @@ namespace ArxOne.OneFilesystem.Protocols
         {
             using (var clientSession = GetClientSession(entryPath))
             {
-                var ftpListItem = clientSession.Session.GetObjectInfo(GetLocalPath(entryPath));
+                FtpListItem ftpListItem = null;
+                var t = Tuple.Create(entryPath.Host, entryPath.Port);
+                if (!_avoidGetObjectInfo.Contains(t) && clientSession.Session.Capabilities.HasFlag(FtpCapability.MLSD))
+                {
+                    try
+                    {
+                        ftpListItem = clientSession.Session.GetObjectInfo(GetLocalPath(entryPath));
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _avoidGetObjectInfo.Add(t);
+                    }
+                }
+                if (ftpListItem == null)
+                    ftpListItem = clientSession.Session.GetListing(GetLocalPath(entryPath.GetParent())).SingleOrDefault(f => f.Name == entryPath.Name);
                 return CreateEntryInformation(clientSession.Session, entryPath, ftpListItem);
             }
         }

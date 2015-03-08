@@ -168,6 +168,38 @@ namespace ArxOne.OneFilesystem
         }
 
         /// <summary>
+        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object obj)
+        {
+            var other = obj as OnePath;
+            if (other == null)
+                return false;
+            return Protocol == other.Protocol
+                   && Host == other.Host
+                   && Port == other.Port
+                   && Path.SequenceEqual(other.Path);
+        }
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            var h = Protocol.GetHashCode() ^ Host.GetHashCode() ^ Port.GetHashCode();
+            foreach (var part in Path)
+                h ^= part.GetHashCode();
+            return h;
+        }
+
+        /// <summary>
         /// Makes the path clean, by eliminated empty parts, single and double dot specific parts.
         /// </summary>
         /// <param name="pathParts">The path parts.</param>
