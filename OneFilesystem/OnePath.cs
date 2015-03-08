@@ -4,7 +4,6 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
-
 namespace ArxOne.OneFilesystem
 {
     using System;
@@ -203,6 +202,18 @@ namespace ArxOne.OneFilesystem
                 return null;
 
             return new OnePath(Protocol, Host, Port, Path.Take(Path.Count - 1));
+        }
+
+        /// <summary>
+        /// Gets the root (protocol and host without any path).
+        /// </summary>
+        /// <returns></returns>
+        public OnePath GetRoot()
+        {
+            if (Path.Count == 0)
+                return this;
+
+            return new OnePath(Protocol, Host, Port, new string[0]);
         }
 
         /// <summary>

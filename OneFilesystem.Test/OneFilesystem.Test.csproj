@@ -54,6 +54,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="FileTest.cs" />
+    <Compile Include="FtpTest.cs" />
     <Compile Include="PathTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

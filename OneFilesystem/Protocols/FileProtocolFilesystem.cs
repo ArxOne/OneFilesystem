@@ -1,11 +1,17 @@
-﻿
+﻿#region OneFilesystem
+// OneFilesystem
+// (to rule them all... Or at least some...)
+// https://github.com/ArxOne/OneFilesystem
+// Released under MIT license http://opensource.org/licenses/MIT
+#endregion
+
 namespace ArxOne.OneFilesystem.Protocols
 {
     using System;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.IO;
     using System.Linq;
+    using System.Net;
 
     /// <summary>
     /// Default filesystem protocol
@@ -30,6 +36,12 @@ namespace ArxOne.OneFilesystem.Protocols
         {
             get { return "file"; }
         }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        { }
 
         /// <summary>
         /// Indicates if this filesystem handles the given protocol.
@@ -82,7 +94,7 @@ namespace ArxOne.OneFilesystem.Protocols
         /// <summary>
         /// Enumerates the entries.
         /// </summary>
-        /// <param name="directoryPath"></param>
+        /// <param name="directoryPath">A directory path to get listing from</param>
         /// <returns>
         /// A list, or null if the directory is not found (if the directoryPath points to a file, an empty list is returned)
         /// </returns>

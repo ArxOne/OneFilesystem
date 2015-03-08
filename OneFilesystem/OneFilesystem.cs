@@ -1,33 +1,57 @@
-﻿
+﻿#region OneFilesystem
+// OneFilesystem
+// (to rule them all... Or at least some...)
+// https://github.com/ArxOne/OneFilesystem
+// Released under MIT license http://opensource.org/licenses/MIT
+#endregion
+
 namespace ArxOne.OneFilesystem
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using Protocols;
 
-    public class OneFilesystem : IOneFilesystem
+    public class OneFilesystem : IOneFilesystem, IDisposable
     {
-        /// <summary>
-        /// All known filesystems
-        /// </summary>
-        public static readonly IOneProtocolFilesystem[] Filesystems = { new FileProtocolFilesystem() };
-
         private readonly Dictionary<string, IList<IOneProtocolFilesystem>> _protocolFilesystemsByProtocol;
         private readonly IList<IOneProtocolFilesystem> _nullFilesystems;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OneFilesystem"/> class.
+        /// Initializes a new instance of the <see cref="OneFilesystem" /> class.
         /// </summary>
+        /// <param name="credentialsByHost">The credentials by host.</param>
         /// <param name="protocolFilesystems">The protocol filesystems.</param>
-        public OneFilesystem(IOneProtocolFilesystem[] protocolFilesystems = null)
+        public OneFilesystem(ICredentialsByHost credentialsByHost = null, IOneProtocolFilesystem[] protocolFilesystems = null)
         {
-            var validProtocolFilesystems = protocolFilesystems ?? Filesystems;
+            var validProtocolFilesystems = protocolFilesystems ?? CreateDefaultFilesystems(credentialsByHost);
             _protocolFilesystemsByProtocol = validProtocolFilesystems.Where(p => p.Protocol != null)
                 .GroupBy(p => p.Protocol)
                 .ToDictionary(p => p.Key, p => (IList<IOneProtocolFilesystem>)p.ToList());
             _nullFilesystems = validProtocolFilesystems.Where(p => p.Protocol == null).ToList();
+        }
+
+        /// <summary>
+        /// Creates the default filesystems.
+        /// </summary>
+        /// <param name="credentialsByHost">The credentials by host.</param>
+        /// <returns></returns>
+        private static IOneProtocolFilesystem[] CreateDefaultFilesystems(ICredentialsByHost credentialsByHost)
+        {
+            return new IOneProtocolFilesystem[] { new FileProtocolFilesystem(), new FtpProtocolFilesystem(credentialsByHost), new FtpsProtocolFilesystem(credentialsByHost) };
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var filesystem in _protocolFilesystemsByProtocol.Values.SelectMany(v => v))
+                filesystem.Dispose();
+            foreach (var filesystem in _nullFilesystems)
+                filesystem.Dispose();
         }
 
         /// <summary>
@@ -36,9 +60,9 @@ namespace ArxOne.OneFilesystem
         /// <param name="onePath">The one path.</param>
         /// <returns></returns>
         /// <exception cref="System.NotSupportedException"></exception>
-        private IOneFilesystem GetFilesystem(OnePath onePath)
+        private IOneProtocolFilesystem GetFilesystem(OnePath onePath)
         {
-            IOneFilesystem filesystem;
+            IOneProtocolFilesystem filesystem;
             IList<IOneProtocolFilesystem> filesystems;
             if (_protocolFilesystemsByProtocol.TryGetValue(onePath.Protocol, out filesystems))
             {
@@ -63,7 +87,8 @@ namespace ArxOne.OneFilesystem
         /// </returns>
         public IEnumerable<OneEntryInformation> EnumerateEntries(OnePath directoryPath)
         {
-            return GetFilesystem(directoryPath).EnumerateEntries(directoryPath);
+            var filesystem = GetFilesystem(directoryPath);
+            return filesystem.EnumerateEntries(directoryPath);
         }
 
         /// <summary>
@@ -77,27 +102,60 @@ namespace ArxOne.OneFilesystem
             var entryInformation = entryPath as OneEntryInformation;
             if (entryInformation != null)
                 return entryInformation;
-            return GetFilesystem(entryPath).GetInformation(entryPath);
+            var filesystem = GetFilesystem(entryPath);
+            return filesystem.GetInformation(entryPath);
         }
 
+        /// <summary>
+        /// Opens file for reading.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <returns>
+        /// A readable stream, or null if the file does not exist or is a directory
+        /// </returns>
         public Stream OpenRead(OnePath filePath)
         {
-            return GetFilesystem(filePath).OpenRead(filePath);
+            var filesystem = GetFilesystem(filePath);
+            return filesystem.OpenRead(filePath);
         }
 
+        /// <summary>
+        /// Deletes the specified file or directory (does not recurse directories).
+        /// </summary>
+        /// <param name="entryPath"></param>
+        /// <returns>
+        /// true is entry was successfully deleted
+        /// </returns>
         public bool Delete(OnePath entryPath)
         {
-            return GetFilesystem(entryPath).Delete(entryPath);
+            var filesystem = GetFilesystem(entryPath);
+            return filesystem.Delete(entryPath);
         }
 
+        /// <summary>
+        /// Creates the file and returns a writable stream.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns>
+        /// A writable stream or null if creation fails (entry exists or path not found)
+        /// </returns>
         public Stream CreateFile(OnePath filePath)
         {
-            return GetFilesystem(filePath).CreateFile(filePath);
+            var filesystem = GetFilesystem(filePath);
+            return filesystem.CreateFile(filePath);
         }
 
+        /// <summary>
+        /// Creates the directory.
+        /// </summary>
+        /// <param name="directoryPath">The directory path.</param>
+        /// <returns>
+        /// true if directory was created
+        /// </returns>
         public bool CreateDirectory(OnePath directoryPath)
         {
-            return GetFilesystem(directoryPath).CreateDirectory(directoryPath);
+            var filesystem = GetFilesystem(directoryPath);
+            return filesystem.CreateDirectory(directoryPath);
         }
     }
 }

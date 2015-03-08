@@ -4,12 +4,10 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
-
 namespace ArxOne.OneFilesystem.Test
 {
     using System;
     using System.Linq;
-    using ArxOne.OneFilesystem;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]

@@ -1,5 +1,11 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿#region OneFilesystem
+// OneFilesystem
+// (to rule them all... Or at least some...)
+// https://github.com/ArxOne/OneFilesystem
+// Released under MIT license http://opensource.org/licenses/MIT
+#endregion
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
