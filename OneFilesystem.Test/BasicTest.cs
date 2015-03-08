@@ -6,6 +6,7 @@ namespace ArxOne.OneFilesystem.Test
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Web;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -18,14 +19,17 @@ namespace ArxOne.OneFilesystem.Test
                 Assert.Inconclusive("File '{0}' not found", credentialsTxt);
             using (var streamReader = File.OpenText(credentialsTxt))
             {
-                var line = streamReader.ReadLine();
-                if (line == null)
-                    yield break;
+                for (; ; )
+                {
+                    var line = streamReader.ReadLine();
+                    if (line == null)
+                        yield break;
 
-                var uri = new Uri(line);
-                var l = uri.UserInfo;
-                var up = l.Split(new[] { ':' }, 2);
-                yield return Tuple.Create(new OnePath(uri), new NetworkCredential(up[0], up[1]));
+                    var uri = new Uri(line);
+                    var l = HttpUtility.UrlDecode(uri.UserInfo.Replace("_at_", "@"));
+                    var up = l.Split(new[] { ':' }, 2);
+                    yield return Tuple.Create(new OnePath(uri), new NetworkCredential(up[0], up[1]));
+                }
             }
         }
 
@@ -44,6 +48,15 @@ namespace ArxOne.OneFilesystem.Test
         public void FtpEnumerateFilesTest()
         {
             EnumerateFilesTest("ftp");
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Ftpes")]
+        public void FtpesEnumerateFilesTest()
+        {
+            EnumerateFilesTest("ftpes");
         }
 
         private void EnumerateFilesTest(string protocol)

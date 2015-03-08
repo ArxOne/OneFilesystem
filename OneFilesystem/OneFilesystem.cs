@@ -39,7 +39,8 @@ namespace ArxOne.OneFilesystem
         /// <returns></returns>
         private static IOneProtocolFilesystem[] CreateDefaultFilesystems(ICredentialsByHost credentialsByHost)
         {
-            return new IOneProtocolFilesystem[] { new FileProtocolFilesystem(), new FtpProtocolFilesystem(credentialsByHost), new FtpsProtocolFilesystem(credentialsByHost) };
+            return new IOneProtocolFilesystem[] { new FileProtocolFilesystem(), new FtpProtocolFilesystem(credentialsByHost),
+                new FtpesProtocolFilesystem(credentialsByHost) , new FtpsProtocolFilesystem(credentialsByHost) };
         }
 
         /// <summary>
