@@ -79,6 +79,14 @@ namespace ArxOne.OneFilesystem.Protocols
             return string.Format("{0}{0}{1}{0}{2}", Path.DirectorySeparatorChar, entryPath.Host, localPath);
         }
 
+        /// <summary>
+        /// Enumerates the entries.
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <returns>
+        /// A list, or null if the directory is not found (if the directoryPath points to a file, an empty list is returned)
+        /// </returns>
+        /// <exception cref="System.ArgumentOutOfRangeException"></exception>
         public IEnumerable<OneEntryInformation> EnumerateEntries(OnePath directoryPath)
         {
             switch (GetNodeType(directoryPath))
@@ -94,14 +102,23 @@ namespace ArxOne.OneFilesystem.Protocols
             }
         }
 
+        /// <summary>
+        /// Creates the entry information.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <param name="localPath">The local path to speed up things.</param>
+        /// <param name="isDirectory">if set to <c>true</c> [is directory].</param>
+        /// <returns></returns>
         private static OneEntryInformation CreateEntryInformation(OnePath path, string localPath, bool isDirectory)
         {
+            // -- directory
             if (isDirectory)
             {
                 var directoryInfo = new DirectoryInfo(localPath);
                 return new OneEntryInformation(path, true, null, directoryInfo.CreationTimeUtc, directoryInfo.LastWriteTimeUtc, directoryInfo.LastAccessTimeUtc);
             }
 
+            // -- file
             var fileInfo = new FileInfo(localPath);
             return new OneEntryInformation(path, false, fileInfo.Length, fileInfo.CreationTimeUtc, fileInfo.LastWriteTimeUtc, fileInfo.LastAccessTimeUtc);
         }
@@ -116,7 +133,7 @@ namespace ArxOne.OneFilesystem.Protocols
             return DriveInfo.GetDrives().Select(d => CreateEntryInformation(directoryPath + d.Name, d.Name, true));
         }
 
-        private IEnumerable<OneEntryInformation> EnumerateServerEntries(OnePath directoryPath)
+        private static IEnumerable<OneEntryInformation> EnumerateServerEntries(OnePath directoryPath)
         {
             throw new NotImplementedException();
         }
@@ -126,42 +143,160 @@ namespace ArxOne.OneFilesystem.Protocols
         /// </summary>
         /// <param name="directoryPath">The directory path.</param>
         /// <returns></returns>
-        private IEnumerable<OneEntryInformation> EnumerateDefaultEntries(OnePath directoryPath)
+        private static IEnumerable<OneEntryInformation> EnumerateDefaultEntries(OnePath directoryPath)
         {
-            var localPath = GetLocalPath(directoryPath);
+            var localPath = GetLocalPath(directoryPath) + Path.DirectorySeparatorChar;
             if (File.Exists(localPath))
                 return new OneEntryInformation[0];
             if (Directory.Exists(localPath))
             {
-                return Directory.EnumerateDirectories(localPath).Select(n => CreateEntryInformation(directoryPath + n, Path.Combine(localPath, n), true))
-                    .Union(Directory.EnumerateFiles(localPath).Select(n => CreateEntryInformation(directoryPath + n, Path.Combine(localPath, n), false)));
+                return Directory.EnumerateDirectories(localPath).Select(n => CreateEntryInformation(directoryPath + Path.GetFileName(n), n, true))
+                    .Union(Directory.EnumerateFiles(localPath).Select(n => CreateEntryInformation(directoryPath + Path.GetFileName(n), n, false)));
             }
             return null;
         }
 
+        /// <summary>
+        /// Gets the information about the referenced file.
+        /// </summary>
+        /// <param name="entryPath">A file path to get information about</param>
+        /// <returns>
+        /// Information or null if entry is not found
+        /// </returns>
         public OneEntryInformation GetInformation(OnePath entryPath)
         {
-            throw new System.NotImplementedException();
+            var localPath = GetLocalPath(entryPath);
+            if (Directory.Exists(localPath))
+                return CreateEntryInformation(entryPath, localPath, true);
+            if (File.Exists(localPath))
+                return CreateEntryInformation(entryPath, localPath, false);
+            return null;
         }
 
+        /// <summary>
+        /// Opens file for reading.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <returns>
+        /// A readable stream, or null if the file does not exist
+        /// </returns>
         public Stream OpenRead(OnePath filePath)
         {
-            throw new System.NotImplementedException();
+            var localPath = GetLocalPath(filePath);
+            if (File.Exists(localPath))
+                return File.OpenRead(localPath);
+
+            return null;
         }
 
+        /// <summary>
+        /// Deletes the specified file or directory (does not recurse directories).
+        /// </summary>
+        /// <param name="entryPath"></param>
+        /// <returns>
+        /// true is entry was successfully deleted
+        /// </returns>
         public bool Delete(OnePath entryPath)
         {
-            throw new System.NotImplementedException();
+            var localPath = GetLocalPath(entryPath);
+            if (File.Exists(localPath))
+                return DeleteFile(localPath);
+            if (Directory.Exists(localPath))
+                return DeleteDirectory(localPath);
+            return false;
         }
 
+        /// <summary>
+        /// Deletes the file.
+        /// </summary>
+        /// <param name="localPath">The local path.</param>
+        /// <returns></returns>
+        private static bool DeleteFile(string localPath)
+        {
+            try
+            {
+                File.Delete(localPath);
+                return true;
+            }
+            catch (DirectoryNotFoundException)
+            {
+            }
+            catch (IOException)
+            {
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Deletes the directory.
+        /// </summary>
+        /// <param name="localPath">The local path.</param>
+        /// <returns></returns>
+        private static bool DeleteDirectory(string localPath)
+        {
+            try
+            {
+                Directory.Delete(localPath);
+                return true;
+            }
+            catch (DirectoryNotFoundException)
+            {
+            }
+            catch (IOException)
+            {
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Creates the file and returns a writable stream.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns>
+        /// A writable stream or null if creation fails (entry exists or path not found)
+        /// </returns>
         public Stream CreateFile(OnePath filePath)
         {
-            throw new System.NotImplementedException();
+            var localPath = GetLocalPath(filePath);
+            if (Directory.Exists(localPath) || File.Exists(localPath))
+                return null;
+            if (!Directory.Exists(GetLocalPath(filePath.GetParent())))
+                return null;
+
+            return File.Create(localPath);
         }
 
-        public void CreateDirectory(OnePath directoryPath)
+        /// <summary>
+        /// Creates the directory.
+        /// </summary>
+        /// <param name="directoryPath">The directory path.</param>
+        /// <returns>
+        /// true if directory was created
+        /// </returns>
+        public bool CreateDirectory(OnePath directoryPath)
         {
-            throw new System.NotImplementedException();
+            var localPath = GetLocalPath(directoryPath);
+            if (Directory.Exists(localPath) || File.Exists(localPath))
+                return false;
+            if (!Directory.Exists(GetLocalPath(directoryPath.GetParent())))
+                return false;
+
+            try
+            {
+                Directory.CreateDirectory(localPath);
+                return true;
+            }
+            catch (IOException)
+            { }
+            catch (UnauthorizedAccessException)
+            { }
+            return false;
         }
     }
 }

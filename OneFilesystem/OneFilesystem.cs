@@ -9,11 +9,18 @@ namespace ArxOne.OneFilesystem
 
     public class OneFilesystem : IOneFilesystem
     {
-        public static readonly IOneProtocolFilesystem[] Filesystems = new IOneProtocolFilesystem[] { new FileProtocolFilesystem() };
+        /// <summary>
+        /// All known filesystems
+        /// </summary>
+        public static readonly IOneProtocolFilesystem[] Filesystems = { new FileProtocolFilesystem() };
 
         private readonly Dictionary<string, IList<IOneProtocolFilesystem>> _protocolFilesystemsByProtocol;
         private readonly IList<IOneProtocolFilesystem> _nullFilesystems;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OneFilesystem"/> class.
+        /// </summary>
+        /// <param name="protocolFilesystems">The protocol filesystems.</param>
         public OneFilesystem(IOneProtocolFilesystem[] protocolFilesystems = null)
         {
             var validProtocolFilesystems = protocolFilesystems ?? Filesystems;
@@ -47,13 +54,29 @@ namespace ArxOne.OneFilesystem
             throw new NotSupportedException(string.Format("Found no filesystem to handle URI '{0}'", onePath));
         }
 
+        /// <summary>
+        /// Enumerates the entries.
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <returns>
+        /// A list, or null if the directory is not found (if the directoryPath points to a file, an empty list is returned)
+        /// </returns>
         public IEnumerable<OneEntryInformation> EnumerateEntries(OnePath directoryPath)
         {
             return GetFilesystem(directoryPath).EnumerateEntries(directoryPath);
         }
 
+        /// <summary>
+        /// Gets the information.
+        /// </summary>
+        /// <param name="entryPath"></param>
+        /// <returns></returns>
         public OneEntryInformation GetInformation(OnePath entryPath)
         {
+            // A quick check to avoid annoying everyone
+            var entryInformation = entryPath as OneEntryInformation;
+            if (entryInformation != null)
+                return entryInformation;
             return GetFilesystem(entryPath).GetInformation(entryPath);
         }
 
@@ -72,9 +95,9 @@ namespace ArxOne.OneFilesystem
             return GetFilesystem(filePath).CreateFile(filePath);
         }
 
-        public void CreateDirectory(OnePath directoryPath)
+        public bool CreateDirectory(OnePath directoryPath)
         {
-            GetFilesystem(directoryPath).CreateFile(directoryPath);
+            return GetFilesystem(directoryPath).CreateDirectory(directoryPath);
         }
     }
 }

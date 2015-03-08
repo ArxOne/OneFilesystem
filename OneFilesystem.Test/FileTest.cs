@@ -7,6 +7,7 @@
 namespace ArxOne.OneFilesystem.Test
 {
     using System;
+    using System.IO;
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -30,6 +31,30 @@ namespace ArxOne.OneFilesystem.Test
             var oneFilesystem = new OneFilesystem();
             var entryInformations = oneFilesystem.EnumerateEntries("file://localhost/C:");
             Assert.IsTrue(entryInformations.Any(e => string.Equals(e.Name, "Windows", StringComparison.InvariantCultureIgnoreCase)));
+        }
+        [TestMethod]
+        [TestCategory("File")]
+        [TestCategory("Local")]
+        public void CreateFileTest()
+        {
+            var oneFilesystem = new OneFilesystem();
+            var filePath = new OnePath(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()));
+
+            try
+            {
+                using (var s = oneFilesystem.CreateFile(filePath))
+                    s.WriteByte(1);
+
+                using (var s2 = oneFilesystem.OpenRead(filePath))
+                {
+                    Assert.AreEqual(1, s2.ReadByte());
+                    Assert.AreEqual(-1, s2.ReadByte());
+                }
+            }
+            finally
+            {
+                oneFilesystem.Delete(filePath);
+            }
         }
     }
 }
