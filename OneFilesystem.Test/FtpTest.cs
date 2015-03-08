@@ -9,6 +9,7 @@ namespace ArxOne.OneFilesystem.Test
     using System;
     using System.IO;
     using System.Linq;
+    using IO;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -27,7 +28,7 @@ namespace ArxOne.OneFilesystem.Test
                 using (var s = oneFilesystem.OpenRead(anyFile))
                 {
                     var b = new Byte[anyFile.Length.Value];
-                    s.Read(b, 0, b.Length);
+                    s.ReadAll(b, 0, b.Length);
                     Assert.AreEqual(-1, s.ReadByte());
                 }
             }

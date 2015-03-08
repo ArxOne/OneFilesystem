@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IOneFilesystem.cs" />
+    <Compile Include="IO\StreamExtensions.cs" />
     <Compile Include="IO\VirtualStream.cs" />
     <Compile Include="OneFilesystem.cs" />
     <Compile Include="OneEntryInformation.cs" />

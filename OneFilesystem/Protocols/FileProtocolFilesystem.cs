@@ -4,14 +4,12 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
-
 namespace ArxOne.OneFilesystem.Protocols
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Net;
 
     /// <summary>
     /// Default filesystem protocol

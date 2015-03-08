@@ -4,12 +4,9 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
-
 namespace ArxOne.OneFilesystem.Protocols
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO;
 
     public interface IOneProtocolFilesystem : IDisposable, IOneFilesystem
     {

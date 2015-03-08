@@ -8,7 +8,6 @@ namespace ArxOne.OneFilesystem
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
 
     public interface IOneFilesystem
     {
