@@ -30,7 +30,7 @@ using (var oneFilesystem = new OneFilesystem())
 
 ### Paths
 
-OneFilesystem works with URI (where you specify `file`, `ftp`, `ftps`, `ftpes`or `sftps` as scheme, a target host and port and a local path). You can also use plain local paths (such as `C:\Windows`)
+OneFilesystem works with URI (where you specify `"file"`, `"ftp"`, `"ftps"`, `"ftpes"`or `"sftps"` as scheme, a target host and port and a local path). You can also use plain local paths (such as `"C:\Windows"`)
 
 All of these path kinds are handled in a unique way by a unique class which is `OnePath`.
 Fortunately for you (and for me), there are implicit conversions from `string`or `Uri`.
