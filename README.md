@@ -1,5 +1,7 @@
 # OneFilesystem
 
+**First of all**: this is not released yet, but will be available soon (before end or March 2015) as a NuGet package. Stay tuned.
+
 ## Why another library of this kind?
 
 Because I found two kind of libraries:
