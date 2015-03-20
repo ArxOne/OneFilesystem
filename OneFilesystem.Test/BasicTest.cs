@@ -27,8 +27,17 @@ namespace ArxOne.OneFilesystem.Test
 
                     var uri = new Uri(line);
                     var l = HttpUtility.UrlDecode(uri.UserInfo.Replace("_at_", "@"));
-                    var up = l.Split(new[] { ':' }, 2);
-                    yield return Tuple.Create(new OnePath(uri), new NetworkCredential(up[0], up[1]));
+                    NetworkCredential networkCredential;
+                    if (string.IsNullOrEmpty(l))
+                    {
+                        networkCredential = new NetworkCredential("anonymous", "here@there.com");
+                    }
+                    else
+                    {
+                        var up = l.Split(new[] { ':' }, 2);
+                        networkCredential = new NetworkCredential(up[0], up[1]);
+                    }
+                    yield return Tuple.Create(new OnePath(uri), networkCredential);
                 }
             }
         }
