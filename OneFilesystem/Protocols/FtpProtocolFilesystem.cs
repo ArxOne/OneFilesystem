@@ -12,6 +12,7 @@ namespace ArxOne.OneFilesystem.Protocols
     using System.Linq;
     using System.Net;
     using System.Net.FtpClient;
+    using Ftp;
     using IO;
     using Session;
 
@@ -22,7 +23,7 @@ namespace ArxOne.OneFilesystem.Protocols
     public class FtpProtocolFilesystem : IOneProtocolFilesystem
     {
         private readonly ICredentialsByHost _credentialsByHost;
-        private readonly SessionProvider<FtpClient> _sessionProvider = new SessionProvider<FtpClient>(c => c.IsConnected && !c.IsDisposed);
+        private IDictionary<Tuple<FtpProtocol, string, int>, FtpClient> _clients = new Dictionary<Tuple<FtpProtocol, string, int>, FtpClient>();
 
         /// <summary>
         /// Gets the protocol.
@@ -35,6 +36,8 @@ namespace ArxOne.OneFilesystem.Protocols
         {
             get { return "ftp"; }
         }
+
+        protected FtpProtocol FtpProtocol { get { return FtpProtocol.Ftp; } }
 
         protected virtual int DefaultPort { get { return 21; } }
 
@@ -52,7 +55,26 @@ namespace ArxOne.OneFilesystem.Protocols
         /// </summary>
         public void Dispose()
         {
-            _sessionProvider.Dispose();
+            lock (_clients)
+            {
+                foreach (var ftpClient in _clients.Values)
+                    ftpClient.Dispose();
+                _clients.Clear();
+            }
+        }
+
+        private FtpClient GetFtpClient(OnePath path)
+        {
+            lock (_clients)
+            {
+                var port = path.Port ?? DefaultPort;
+                var key = Tuple.Create(FtpProtocol, path.Host, port);
+                FtpClient ftpClient;
+                if (_clients.TryGetValue(key, out ftpClient))
+                    return ftpClient;
+                _clients[key] = ftpClient = new FtpClient(FtpProtocol, path.Host, port, GetNetworkCredential(path.GetRoot()));
+                return ftpClient;
+            }
         }
 
         /// <summary>
@@ -78,32 +100,15 @@ namespace ArxOne.OneFilesystem.Protocols
         /// <summary>
         /// Creates the entry information.
         /// </summary>
-        /// <param name="ftpClient">The FTP client.</param>
-        /// <param name="entryPath">The entry path.</param>
-        /// <param name="ftpListItem">The list item.</param>
+        /// <param name="parentPath">The parent path.</param>
+        /// <param name="ftpEntry">The FTP entry.</param>
         /// <returns></returns>
-        private static OneEntryInformation CreateEntryInformation(FtpClient ftpClient, OnePath entryPath, FtpListItem ftpListItem)
+        private static OneEntryInformation CreateEntryInformation(OnePath parentPath, FtpEntry ftpEntry)
         {
-            if (ftpListItem.Type == FtpFileSystemObjectType.Link)
-            {
-                ftpListItem = ftpClient.DereferenceLink(ftpListItem);
-                entryPath = entryPath.GetRoot() + ftpListItem.FullName;
-            }
-            bool isDirectory = ftpListItem.Type == FtpFileSystemObjectType.Directory;
-            return new OneEntryInformation(entryPath, isDirectory, isDirectory ? (long?)null : ftpListItem.Size,
-                ftpListItem.Created, ftpListItem.Modified);
-        }
-
-        /// <summary>
-        /// Gets the client session.
-        /// </summary>
-        /// <param name="path">The path.</param>
-        /// <returns></returns>
-        private ClientSession<FtpClient> GetClientSession(OnePath path)
-        {
-            var networkCredential = GetNetworkCredential(path);
-            return _sessionProvider.Get(path.Host, path.Port ?? 0, networkCredential.UserName,
-                () => CreateClientSession(path.Host, path.Port, networkCredential));
+            if (ftpEntry.Type == FtpEntryType.Link)
+                return null;
+            var entryPath = parentPath + ftpEntry.Name;
+            return new OneEntryInformation(entryPath, ftpEntry.Type == FtpEntryType.Directory, ftpEntry.Size, lastWriteTimeUtc: ftpEntry.Date);
         }
 
         /// <summary>
@@ -123,25 +128,6 @@ namespace ArxOne.OneFilesystem.Protocols
         }
 
         /// <summary>
-        /// Creates the client session.
-        /// </summary>
-        /// <param name="host">The host.</param>
-        /// <param name="port">The port.</param>
-        /// <param name="networkCredential">The network credential.</param>
-        /// <returns></returns>
-        protected virtual FtpClient CreateClientSession(string host, int? port, NetworkCredential networkCredential)
-        {
-            var ftpClient = new FtpClient();
-            ftpClient.Host = host;
-            ftpClient.Port = port ?? DefaultPort;
-            ftpClient.Credentials = networkCredential;
-            ftpClient.ValidateCertificate += delegate(FtpClient client, FtpSslValidationEventArgs validationEventArgs)
-                                                { validationEventArgs.Accept = true; };
-            ftpClient.Connect();
-            return ftpClient;
-        }
-
-        /// <summary>
         /// Enumerates the entries.
         /// </summary>
         /// <param name="directoryPath">A directory path to get listing from</param>
@@ -150,12 +136,8 @@ namespace ArxOne.OneFilesystem.Protocols
         /// </returns>
         public IEnumerable<OneEntryInformation> EnumerateEntries(OnePath directoryPath)
         {
-            using (var clientSession = GetClientSession(directoryPath))
-            {
-                var ftpClient = clientSession.Session;
-                return ftpClient.GetListing(GetLocalPath(directoryPath)).Select(e => CreateEntryInformation(ftpClient, directoryPath + e.Name, e))
-                    .Where(i => i != null).ToList();
-            }
+            return GetFtpClient(directoryPath).StatEntries(GetLocalPath(directoryPath)).Select(entry => CreateEntryInformation(directoryPath, entry))
+                .Where(i => i != null).ToList();
         }
 
         private readonly HashSet<Tuple<string, int?>> _avoidGetObjectInfo = new HashSet<Tuple<string, int?>>();
