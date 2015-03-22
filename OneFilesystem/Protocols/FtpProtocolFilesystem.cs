@@ -11,10 +11,8 @@ namespace ArxOne.OneFilesystem.Protocols
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Net.FtpClient;
     using Ftp;
-    using IO;
-    using Session;
+    using Ftp.Exceptions;
 
     /// <summary>
     /// FTP protocol filesystem.
@@ -23,7 +21,8 @@ namespace ArxOne.OneFilesystem.Protocols
     public class FtpProtocolFilesystem : IOneProtocolFilesystem
     {
         private readonly ICredentialsByHost _credentialsByHost;
-        private IDictionary<Tuple<FtpProtocol, string, int>, FtpClient> _clients = new Dictionary<Tuple<FtpProtocol, string, int>, FtpClient>();
+        private readonly IDictionary<Tuple<FtpProtocol, string, int>, FtpClient> _clients
+            = new Dictionary<Tuple<FtpProtocol, string, int>, FtpClient>();
 
         /// <summary>
         /// Gets the protocol.
@@ -37,7 +36,7 @@ namespace ArxOne.OneFilesystem.Protocols
             get { return "ftp"; }
         }
 
-        protected FtpProtocol FtpProtocol { get { return FtpProtocol.Ftp; } }
+        protected virtual FtpProtocol FtpProtocol { get { return FtpProtocol.Ftp; } }
 
         protected virtual int DefaultPort { get { return 21; } }
 
@@ -140,8 +139,6 @@ namespace ArxOne.OneFilesystem.Protocols
                 .Where(i => i != null).ToList();
         }
 
-        private readonly HashSet<Tuple<string, int?>> _avoidGetObjectInfo = new HashSet<Tuple<string, int?>>();
-
         /// <summary>
         /// Gets the information about the referenced file.
         /// </summary>
@@ -152,25 +149,7 @@ namespace ArxOne.OneFilesystem.Protocols
         /// <exception cref="System.NotImplementedException"></exception>
         public OneEntryInformation GetInformation(OnePath entryPath)
         {
-            using (var clientSession = GetClientSession(entryPath))
-            {
-                FtpListItem ftpListItem = null;
-                var t = Tuple.Create(entryPath.Host, entryPath.Port);
-                if (!_avoidGetObjectInfo.Contains(t) && clientSession.Session.Capabilities.HasFlag(FtpCapability.MLSD))
-                {
-                    try
-                    {
-                        ftpListItem = clientSession.Session.GetObjectInfo(GetLocalPath(entryPath));
-                    }
-                    catch (NullReferenceException)
-                    {
-                        _avoidGetObjectInfo.Add(t);
-                    }
-                }
-                if (ftpListItem == null)
-                    ftpListItem = clientSession.Session.GetListing(GetLocalPath(entryPath.GetParent())).SingleOrDefault(f => f.Name == entryPath.Name);
-                return CreateEntryInformation(clientSession.Session, entryPath, ftpListItem);
-            }
+            return EnumerateEntries(entryPath.GetParent()).SingleOrDefault(n => n.Name == entryPath.Name);
         }
 
         /// <summary>
@@ -182,19 +161,7 @@ namespace ArxOne.OneFilesystem.Protocols
         /// </returns>
         public Stream OpenRead(OnePath filePath)
         {
-            var clientSession = GetClientSession(filePath);
-            try
-            {
-                var ftpStream = clientSession.Session.OpenRead(GetLocalPath(filePath), FtpDataType.Binary);
-                var stream = new VirtualStream(ftpStream);
-                stream.Disposed += delegate { clientSession.Dispose(); };
-                return stream;
-            }
-            catch (FtpException)
-            {
-            }
-            clientSession.Dispose();
-            return null;
+            return GetFtpClient(filePath).Retr(GetLocalPath(filePath));
         }
 
         /// <summary>
@@ -212,21 +179,18 @@ namespace ArxOne.OneFilesystem.Protocols
             if (entryInformation == null)
                 return Delete(GetInformation(entryPath));
             // here, entryInformation is valid
-            using (var clientSession = GetClientSession(entryPath))
+            try
             {
-                try
-                {
-                    var localPath = GetLocalPath(entryInformation);
-                    if (entryInformation.IsDirectory)
-                        clientSession.Session.DeleteDirectory(localPath);
-                    else
-                        clientSession.Session.DeleteFile(localPath);
-                    return true;
-                }
-                catch (FtpException)
-                { }
-                return false;
+                var localPath = GetLocalPath(entryInformation);
+                if (entryInformation.IsDirectory)
+                    GetFtpClient(entryPath).Rmd(localPath);
+                else
+                    GetFtpClient(entryPath).Dele(localPath);
+                return true;
             }
+            catch (FtpProtocolException)
+            { }
+            return false;
         }
 
         /// <summary>
@@ -238,18 +202,12 @@ namespace ArxOne.OneFilesystem.Protocols
         /// </returns>
         public Stream CreateFile(OnePath filePath)
         {
-            var clientSession = GetClientSession(filePath);
             try
             {
-                var ftpStream = clientSession.Session.OpenWrite(GetLocalPath(filePath), FtpDataType.Binary);
-                var stream = new VirtualStream(ftpStream);
-                stream.Disposed += delegate { clientSession.Dispose(); };
-                return stream;
+                return GetFtpClient(filePath).Stor(GetLocalPath(filePath));
             }
-            catch (FtpException)
-            {
-            }
-            clientSession.Dispose();
+            catch (FtpProtocolException)
+            { }
             return null;
         }
 
@@ -262,17 +220,14 @@ namespace ArxOne.OneFilesystem.Protocols
         /// </returns>
         public bool CreateDirectory(OnePath directoryPath)
         {
-            using (var clientSession = GetClientSession(directoryPath))
+            try
             {
-                try
-                {
-                    clientSession.Session.CreateDirectory(GetLocalPath(directoryPath));
-                    return true;
-                }
-                catch (FtpException)
-                { }
-                return false;
+                GetFtpClient(directoryPath).Mkd(GetLocalPath(directoryPath));
+                return true;
             }
+            catch (FtpProtocolException)
+            { }
+            return false;
         }
     }
 }

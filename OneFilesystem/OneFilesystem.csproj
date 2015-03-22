@@ -48,7 +48,9 @@
     <Compile Include="OnePath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocols\FileProtocolFilesystem.cs" />
+    <Compile Include="Protocols\FtpesProtocolFilesystem.cs" />
     <Compile Include="Protocols\FtpProtocolFilesystem.cs" />
+    <Compile Include="Protocols\FtpsProtocolFilesystem.cs" />
     <Compile Include="Protocols\IOneProtocolFilesystem.cs" />
     <Compile Include="Session\ClientSession.cs" />
     <Compile Include="Session\ClientSessionProvider.cs" />
