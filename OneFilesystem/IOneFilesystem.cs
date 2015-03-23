@@ -16,7 +16,7 @@ namespace ArxOne.OneFilesystem
         /// </summary>
         /// <param name="directoryPath">A directory path to get listing from</param>
         /// <returns>A list, or null if the directory is not found (if the directoryPath points to a file, an empty list is returned)</returns>
-        IEnumerable<OneEntryInformation> EnumerateEntries(OnePath directoryPath);
+        IEnumerable<OneEntryInformation> GetChildren(OnePath directoryPath);
 
         /// <summary>
         /// Gets the information about the referenced file.

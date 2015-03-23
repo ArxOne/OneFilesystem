@@ -9,7 +9,7 @@ namespace ArxOne.OneFilesystem.IO
     using System;
     using System.IO;
 
-    public class VirtualStream : Stream
+    internal class VirtualStream : Stream
     {
         private readonly Stream _innerStream;
 

@@ -12,6 +12,7 @@ namespace ArxOne.OneFilesystem
     using System.Linq;
     using System.Net;
     using Protocols;
+    using Protocols.Ftp;
 
     public class OneFilesystem : IOneFilesystem, IDisposable
     {
@@ -85,10 +86,10 @@ namespace ArxOne.OneFilesystem
         /// <returns>
         /// A list, or null if the directory is not found (if the directoryPath points to a file, an empty list is returned)
         /// </returns>
-        public IEnumerable<OneEntryInformation> EnumerateEntries(OnePath directoryPath)
+        public IEnumerable<OneEntryInformation> GetChildren(OnePath directoryPath)
         {
             var filesystem = GetFilesystem(directoryPath);
-            return filesystem.EnumerateEntries(directoryPath);
+            return filesystem.GetChildren(directoryPath);
         }
 
         /// <summary>

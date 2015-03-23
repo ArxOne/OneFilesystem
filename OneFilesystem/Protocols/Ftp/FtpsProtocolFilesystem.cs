@@ -1,7 +1,13 @@
-﻿namespace ArxOne.OneFilesystem.Protocols
+﻿#region OneFilesystem
+// OneFilesystem
+// (to rule them all... Or at least some...)
+// https://github.com/ArxOne/OneFilesystem
+// Released under MIT license http://opensource.org/licenses/MIT
+#endregion
+namespace ArxOne.OneFilesystem.Protocols.Ftp
 {
     using System.Net;
-    using Ftp;
+    using ArxOne.Ftp;
 
     public class FtpsProtocolFilesystem : FtpProtocolFilesystem
     {

@@ -4,7 +4,7 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
-namespace ArxOne.OneFilesystem.Protocols
+namespace ArxOne.OneFilesystem.Protocols.Ftp
 {
     using System;
     using System.Collections.Generic;
@@ -97,7 +97,7 @@ namespace ArxOne.OneFilesystem.Protocols
         /// A list, or null if the directory is not found (if the directoryPath points to a file, an empty list is returned)
         /// </returns>
         /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-        public IEnumerable<OneEntryInformation> EnumerateEntries(OnePath directoryPath)
+        public IEnumerable<OneEntryInformation> GetChildren(OnePath directoryPath)
         {
             switch (GetNodeType(directoryPath))
             {

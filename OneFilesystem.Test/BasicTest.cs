@@ -73,7 +73,7 @@ namespace ArxOne.OneFilesystem.Test
             var t = GetTestCredential(protocol);
             using (var fs = new OneFilesystem(t.Item2))
             {
-                var l = fs.EnumerateEntries(t.Item1).ToArray();
+                var l = fs.GetChildren(t.Item1).ToArray();
             }
         }
 

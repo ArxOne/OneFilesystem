@@ -23,7 +23,7 @@ namespace ArxOne.OneFilesystem.Test
             using (var oneFilesystem = new OneFilesystem())
             {
                 //var entryInformations = oneFilesystem.EnumerateEntries("ftp://secureftp-test.com/").ToArray();
-                var entryInformations = oneFilesystem.EnumerateEntries("ftp://mirrors.kernel.org/debian-cd/").ToArray();
+                var entryInformations = oneFilesystem.GetChildren("ftp://mirrors.kernel.org/debian-cd/").ToArray();
                 var anyFile = entryInformations.FirstOrDefault(f => !f.IsDirectory && Path.GetExtension(f.Name) != "");
                 using (var s = oneFilesystem.OpenRead(anyFile))
                 {

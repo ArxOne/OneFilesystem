@@ -20,7 +20,7 @@ namespace ArxOne.OneFilesystem.Test
         public void FromFileLocalUriTest()
         {
             var oneFilesystem = new OneFilesystem();
-            var entryInformations = oneFilesystem.EnumerateEntries("file://localhost");
+            var entryInformations = oneFilesystem.GetChildren("file://localhost");
             Assert.IsTrue(entryInformations.Any(e => e.Name == "C:"));
         }
         [TestMethod]
@@ -29,7 +29,7 @@ namespace ArxOne.OneFilesystem.Test
         public void EnumerateDirectoryTest()
         {
             var oneFilesystem = new OneFilesystem();
-            var entryInformations = oneFilesystem.EnumerateEntries("file://localhost/C:");
+            var entryInformations = oneFilesystem.GetChildren("file://localhost/C:");
             Assert.IsTrue(entryInformations.Any(e => string.Equals(e.Name, "Windows", StringComparison.InvariantCultureIgnoreCase)));
         }
         [TestMethod]

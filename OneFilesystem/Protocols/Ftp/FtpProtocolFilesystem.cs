@@ -4,15 +4,16 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
-namespace ArxOne.OneFilesystem.Protocols
+
+namespace ArxOne.OneFilesystem.Protocols.Ftp
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Net;
-    using Ftp;
-    using Ftp.Exceptions;
+    using ArxOne.Ftp;
+    using ArxOne.Ftp.Exceptions;
 
     /// <summary>
     /// FTP protocol filesystem.
@@ -133,7 +134,7 @@ namespace ArxOne.OneFilesystem.Protocols
         /// <returns>
         /// A list, or null if the directory is not found (if the directoryPath points to a file, an empty list is returned)
         /// </returns>
-        public IEnumerable<OneEntryInformation> EnumerateEntries(OnePath directoryPath)
+        public IEnumerable<OneEntryInformation> GetChildren(OnePath directoryPath)
         {
             return GetFtpClient(directoryPath).StatEntries(GetLocalPath(directoryPath)).Select(entry => CreateEntryInformation(directoryPath, entry))
                 .Where(i => i != null).ToList();
@@ -149,7 +150,7 @@ namespace ArxOne.OneFilesystem.Protocols
         /// <exception cref="System.NotImplementedException"></exception>
         public OneEntryInformation GetInformation(OnePath entryPath)
         {
-            return EnumerateEntries(entryPath.GetParent()).SingleOrDefault(n => n.Name == entryPath.Name);
+            return GetChildren(entryPath.GetParent()).SingleOrDefault(n => n.Name == entryPath.Name);
         }
 
         /// <summary>
@@ -161,7 +162,7 @@ namespace ArxOne.OneFilesystem.Protocols
         /// </returns>
         public Stream OpenRead(OnePath filePath)
         {
-            return GetFtpClient(filePath).Retr(GetLocalPath(filePath));
+            return new FtpStream(GetFtpClient(filePath).Retr(GetLocalPath(filePath)));
         }
 
         /// <summary>
@@ -204,7 +205,7 @@ namespace ArxOne.OneFilesystem.Protocols
         {
             try
             {
-                return GetFtpClient(filePath).Stor(GetLocalPath(filePath));
+                return new FtpStream(GetFtpClient(filePath).Stor(GetLocalPath(filePath)));
             }
             catch (FtpProtocolException)
             { }
