@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2010
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneFilesystem", "OneFilesystem\OneFilesystem.csproj", "{850549FD-F6D6-454E-9A0B-A244648F6B3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneFilesystem.Test", "OneFilesystem.Test\OneFilesystem.Test.csproj", "{C27F2574-C68E-4A80-A443-886C4ABE514B}"
@@ -15,6 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FA9E59
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{F3CF8C52-EB11-4EE9-AB25-828D64A88B23}"
+	ProjectSection(SolutionItems) = preProject
+		credentials.txt = credentials.txt
 	EndProjectSection
 EndProject
 Global
