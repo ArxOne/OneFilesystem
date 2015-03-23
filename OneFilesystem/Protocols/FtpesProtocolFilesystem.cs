@@ -1,13 +1,7 @@
-#region OneFilesystem
-// OneFilesystem
-// (to rule them all... Or at least some...)
-// https://github.com/ArxOne/OneFilesystem
-// Released under MIT license http://opensource.org/licenses/MIT
-#endregion
 namespace ArxOne.OneFilesystem.Protocols
 {
     using System.Net;
-    using System.Net.FtpClient;
+    using Ftp;
 
     public class FtpesProtocolFilesystem : FtpProtocolFilesystem
     {
@@ -16,21 +10,14 @@ namespace ArxOne.OneFilesystem.Protocols
             get { return "ftpes"; }
         }
 
+        protected override FtpProtocol FtpProtocol
+        {
+            get { return FtpProtocol.FtpES; }
+        }
+
         public FtpesProtocolFilesystem(ICredentialsByHost credentialsByHost)
             : base(credentialsByHost)
         {
-        }
-
-        protected override FtpClient CreateClientSession(string host, int? port, NetworkCredential networkCredential)
-        {
-            var ftpClient = new FtpClient();
-            ftpClient.Host = host;
-            ftpClient.Port = port ?? DefaultPort;
-            ftpClient.Credentials = networkCredential;
-            ftpClient.ValidateCertificate += delegate(FtpClient client, FtpSslValidationEventArgs validationEventArgs) { validationEventArgs.Accept = true; };
-            ftpClient.EncryptionMode = FtpEncryptionMode.Explicit;
-            ftpClient.Connect();
-            return ftpClient;
         }
     }
 }
