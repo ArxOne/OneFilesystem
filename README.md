@@ -1,6 +1,6 @@
 # OneFilesystem
 
-**First of all**: this is not released yet, but will be available soon (before end or March 2015) as a NuGet package. Stay tuned.
+**First of all**: it is released as a [NuGet package](https://www.nuget.org/packages/OneFilesystem/). **Important too**: currently it is a pre-release package, because it depends on an [SSH.NET package](https://www.nuget.org/packages/SSH.NET/) version which is prele-release too. Fortunately, things will change soon.
 
 ## Why another library of this kind?
 
