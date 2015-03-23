@@ -4,7 +4,7 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
-namespace ArxOne.OneFilesystem.Protocols.Ftp
+namespace ArxOne.OneFilesystem.Protocols.File
 {
     using System;
     using System.Collections.Generic;

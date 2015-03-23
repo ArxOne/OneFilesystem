@@ -77,6 +77,7 @@ namespace ArxOne.OneFilesystem.IO
             base.Dispose(disposing);
             if (disposing)
             {
+                _innerStream.Dispose();
                 var onDisposed = Disposed;
                 if (onDisposed != null)
                     onDisposed(this, EventArgs.Empty);

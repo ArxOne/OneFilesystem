@@ -12,7 +12,9 @@ namespace ArxOne.OneFilesystem
     using System.Linq;
     using System.Net;
     using Protocols;
+    using Protocols.File;
     using Protocols.Ftp;
+    using Protocols.Sftp;
 
     public class OneFilesystem : IOneFilesystem, IDisposable
     {
@@ -40,8 +42,12 @@ namespace ArxOne.OneFilesystem
         /// <returns></returns>
         private static IOneProtocolFilesystem[] CreateDefaultFilesystems(ICredentialsByHost credentialsByHost)
         {
-            return new IOneProtocolFilesystem[] { new FileProtocolFilesystem(), new FtpProtocolFilesystem(credentialsByHost),
-                new FtpesProtocolFilesystem(credentialsByHost) , new FtpsProtocolFilesystem(credentialsByHost) };
+            return new IOneProtocolFilesystem[]
+            {
+                new FileProtocolFilesystem(), new FtpProtocolFilesystem(credentialsByHost),
+                new FtpesProtocolFilesystem(credentialsByHost), new FtpsProtocolFilesystem(credentialsByHost),
+                new SftpProtocolFilesystem(credentialsByHost),
+            };
         }
 
         /// <summary>

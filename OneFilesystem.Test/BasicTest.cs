@@ -68,6 +68,15 @@ namespace ArxOne.OneFilesystem.Test
             EnumerateFilesTest("ftpes");
         }
 
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Sftp")]
+        public void SftpEnumerateFilesTest()
+        {
+            EnumerateFilesTest("sftp");
+        }
+
         private void EnumerateFilesTest(string protocol)
         {
             var t = GetTestCredential(protocol);
@@ -84,6 +93,24 @@ namespace ArxOne.OneFilesystem.Test
         public void FtpCreateDirectoryTest()
         {
             CreateDirectoryTest("ftp");
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Ftpes")]
+        public void FtpesCreateDirectoryTest()
+        {
+            CreateDirectoryTest("ftpes");
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Sftp")]
+        public void SftpCreateDirectoryTest()
+        {
+            CreateDirectoryTest("sftp");
         }
 
         private void CreateDirectoryTest(string protocol)
@@ -110,6 +137,24 @@ namespace ArxOne.OneFilesystem.Test
         public void FtpCreateFileTest()
         {
             CreateFileTest("ftp");
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Ftpes")]
+        public void FtpesCreateFileTest()
+        {
+            CreateFileTest("ftpes");
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Sftp")]
+        public void SftpCreateFileTest()
+        {
+            CreateFileTest("sftp");
         }
 
         private void CreateFileTest(string protocol)

@@ -35,6 +35,9 @@
     <Reference Include="ArxOne.Ftp">
       <HintPath>..\packages\ArxOne.Ftp.1.0.0.0\lib\net40-Client\ArxOne.Ftp.dll</HintPath>
     </Reference>
+    <Reference Include="Renci.SshNet">
+      <HintPath>..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
@@ -51,12 +54,14 @@
     <Compile Include="OneEntryInformation.cs" />
     <Compile Include="OnePath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protocols\Ftp\FileProtocolFilesystem.cs" />
+    <Compile Include="Protocols\File\FileProtocolFilesystem.cs" />
     <Compile Include="Protocols\Ftp\FtpesProtocolFilesystem.cs" />
     <Compile Include="Protocols\Ftp\FtpProtocolFilesystem.cs" />
     <Compile Include="Protocols\Ftp\FtpsProtocolFilesystem.cs" />
     <Compile Include="Protocols\Ftp\FtpStream.cs" />
     <Compile Include="Protocols\IOneProtocolFilesystem.cs" />
+    <Compile Include="Protocols\Sftp\SftpStream.cs" />
+    <Compile Include="Protocols\Sftp\SftpProtocolFilesystem.cs" />
     <Compile Include="Session\ClientSession.cs" />
     <Compile Include="Session\ClientSessionProvider.cs" />
     <Compile Include="Session\SessionProvider.cs" />
