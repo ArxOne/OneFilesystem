@@ -21,7 +21,9 @@ For example:
 ```csharp
 using (var oneFilesystem = new OneFilesystem())
 {
-    var children = oneFilesystem.EnumerateEntries("C:\MyDirectory");
+    // here, we read some files
+    var children = oneFilesystem.GetChildren("C:\MyDirectory");
+    // now, we create another
     using (var stream = oneFilesystem.OpenRead("ftp://myserver/somefile.txt"))
     {
     }
@@ -38,7 +40,7 @@ Fortunately for you (and for me), there are implicit conversions from `string`or
 ### Operations
 
 A very few and simple operations are supported (extending them is planned, but it will stay simple anyway):
- * Enumerating directory entries using `EnumerateEntries`
+ * Enumerating directory entries using `GetChildren`
  * Getting details about one file using `GetInformation`
  * Open a file for reading using `OpenRead`
  * Create a file for writing using `CreateFile`
