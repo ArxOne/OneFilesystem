@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>$id$</id>
-    <version>$version$-pre</version>
+    <version>$version$</version>
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
@@ -16,5 +16,9 @@
     <copyright>Copyright 2015</copyright>
     <tags>local ftp ftpes ftps sftp filesystem</tags>
     <developmentDependency>false</developmentDependency>
+    <dependencies>
+      <dependency id="ArxOne.Ftp" />
+      <dependency id="SSH.NET" version="(,2014.4.6]" />
+    </dependencies>
   </metadata>
 </package>
