@@ -56,5 +56,28 @@ namespace ArxOne.OneFilesystem.Test
                 oneFilesystem.Delete(filePath);
             }
         }
+
+        [TestMethod]
+        [TestCategory("File")]
+        [TestCategory("Local")]
+        public void GetFileServersTest()
+        {
+            using (var oneFilesystem = new OneFilesystem())
+            {
+                var entryInformations = oneFilesystem.GetChildren("file://").ToList();
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("File")]
+        [TestCategory("Local")]
+        public void GetFileSharesTest()
+        {
+            using (var oneFilesystem = new OneFilesystem())
+            {
+                var aServer = oneFilesystem.GetChildren("file://").First();
+                var shares = oneFilesystem.GetChildren(aServer).ToList();
+            }
+        }
     }
 }

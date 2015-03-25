@@ -76,7 +76,7 @@ namespace ArxOne.OneFilesystem
             get
             {
                 return new Uri(string.Format("{0}://{1}{2}{3}/{4}",
-                    Protocol, Host,
+                    Protocol, Host ?? "",
                     Port.HasValue ? ":" : "", Port.HasValue ? Port.Value.ToString() : "",
                     string.Join("/", Path)));
             }
@@ -103,6 +103,8 @@ namespace ArxOne.OneFilesystem
         {
             Protocol = uri.Scheme;
             Host = uri.Host;
+            if (Host == "")
+                Host = null;
             if (uri.Port >= 0)
                 Port = uri.Port;
             Path = MakePath(uri.AbsolutePath.Split('/'));
@@ -131,10 +133,28 @@ namespace ArxOne.OneFilesystem
                 }
             }
 
+            Protocol = Uri.UriSchemeFile;
             // otherwise, this is a local path
+            // first, look for a simple network root "\\"
+            if (localPathOrUri == @"\\")
+            {
+                Path = new string[0];
+                return;
+            }
+            // then, for a server "\\server" or "\\server\"
+            if (localPathOrUri.StartsWith(@"\\"))
+            {
+                var server = localPathOrUri.Trim('\\');
+                if (!server.Contains('\\'))
+                {
+                    Host = server;
+                    Path = new string[0];
+                    return;
+                }
+            }
+            // otherwise, standard path
             var fullPath = System.IO.Path.GetFullPath(localPathOrUri);
             var allParts = fullPath.Split(Separators);
-            Protocol = Uri.UriSchemeFile;
             if (allParts.Length > 2 && allParts[0] == "" && allParts[1] == "")
             {
                 // remote path
@@ -258,6 +278,8 @@ namespace ArxOne.OneFilesystem
         /// </returns>
         public static OnePath operator +(OnePath path, string entryName)
         {
+            if (path.Host == null)
+                return new OnePath(path.Protocol, entryName, path.Port, new String[0]);
             return new OnePath(path.Protocol, path.Host, path.Port, path.Path.Concat(MakePath(entryName.Split(Separators))));
         }
 

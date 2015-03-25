@@ -37,13 +37,58 @@ namespace ArxOne.OneFilesystem.Test
 
         [TestMethod]
         [TestCategory("Path")]
-        public void FromFileServerTest()
+        public void FromFileShareTest()
         {
             var p = new OnePath(@"\\this\c$");
             Assert.AreEqual("file", p.Protocol);
             Assert.AreEqual("this", p.Host);
             Assert.AreEqual(null, p.Port);
             Assert.IsTrue(p.Path.SequenceEqual(new[] { "c$" }));
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void FromFileRootUriTest()
+        {
+            var p = new OnePath(@"file://");
+            Assert.AreEqual("file", p.Protocol);
+            Assert.IsNull(p.Host);
+            Assert.AreEqual(null, p.Port);
+            Assert.AreEqual(0, p.Path.Count);
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void FromFileRootUNCTest()
+        {
+            var p = new OnePath(@"\\");
+            Assert.AreEqual("file", p.Protocol);
+            Assert.IsNull(p.Host);
+            Assert.AreEqual(null, p.Port);
+            Assert.AreEqual(0, p.Path.Count);
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void AddRootAndNameTest()
+        {
+            var p = new OnePath(@"\\");
+            p += "server";
+            Assert.AreEqual("file", p.Protocol);
+            Assert.AreEqual("server", p.Host);
+            Assert.AreEqual(null, p.Port);
+            Assert.AreEqual(0, p.Path.Count);
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void FromFileServerTest()
+        {
+            var p = new OnePath(@"\\aserver");
+            Assert.AreEqual("file", p.Protocol);
+            Assert.AreEqual("aserver", p.Host);
+            Assert.AreEqual(null, p.Port);
+            Assert.AreEqual(0, p.Path.Count);
         }
     }
 }

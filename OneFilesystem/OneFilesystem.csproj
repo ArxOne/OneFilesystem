@@ -41,6 +41,9 @@
     <Reference Include="ArxOne.Ftp">
       <HintPath>..\packages\ArxOne.Ftp.1.0.0.0\lib\net40-Client\ArxOne.Ftp.dll</HintPath>
     </Reference>
+    <Reference Include="LanExchange.Network">
+      <HintPath>..\packages\LanExchange.Network.1.0.0.0\lib\net40\LanExchange.Network.dll</HintPath>
+    </Reference>
     <Reference Include="Renci.SshNet">
       <HintPath>..\packages\SSH.NET.2014.4.6-beta2\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>

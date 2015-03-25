@@ -10,6 +10,8 @@ namespace ArxOne.OneFilesystem.Protocols.File
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using LanExchange.Network;
+    using LanExchange.Network.Models;
 
     /// <summary>
     /// Default filesystem protocol
@@ -21,6 +23,7 @@ namespace ArxOne.OneFilesystem.Protocols.File
             LocalComputer,
             Server,
             Default,
+            NetworkRoot
         }
 
         /// <summary>
@@ -60,6 +63,8 @@ namespace ArxOne.OneFilesystem.Protocols.File
         {
             if (entryPath.Path.Count > 0)
                 return NodeType.Default;
+            if (entryPath.Host == null)
+                return NodeType.NetworkRoot;
             if (IsLocalhost(entryPath))
                 return NodeType.LocalComputer;
             return NodeType.Server;
@@ -102,11 +107,13 @@ namespace ArxOne.OneFilesystem.Protocols.File
             switch (GetNodeType(directoryPath))
             {
                 case NodeType.LocalComputer:
-                    return EnumerateLocalComputerEntries(directoryPath);
-                case NodeType.Server:
-                    return EnumerateServerEntries(directoryPath);
+                    return GetLocalComputerChildren(directoryPath);
                 case NodeType.Default:
-                    return EnumerateDefaultEntries(directoryPath);
+                    return GetDefaultChildren(directoryPath);
+                case NodeType.NetworkRoot:
+                    return GetNetworkServers(directoryPath);
+                case NodeType.Server:
+                    return GetServerShares(directoryPath);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -138,14 +145,31 @@ namespace ArxOne.OneFilesystem.Protocols.File
         /// </summary>
         /// <param name="directoryPath">The directory path.</param>
         /// <returns></returns>
-        private static IEnumerable<OneEntryInformation> EnumerateLocalComputerEntries(OnePath directoryPath)
+        private static IEnumerable<OneEntryInformation> GetLocalComputerChildren(OnePath directoryPath)
         {
             return DriveInfo.GetDrives().Select(d => CreateEntryInformation(directoryPath + d.Name, d.Name, true));
         }
 
-        private static IEnumerable<OneEntryInformation> EnumerateServerEntries(OnePath directoryPath)
+        /// <summary>
+        /// Gets the network servers.
+        /// </summary>
+        /// <param name="directoryPath">The directory path.</param>
+        /// <returns></returns>
+        private static IEnumerable<OneEntryInformation> GetNetworkServers(OnePath directoryPath)
         {
-            throw new NotImplementedException();
+            var servers = NetworkHelper.NetServerEnum<ServerInfo100>(100, null, SoftwareTypes.SV_TYPE_ALL);
+            return servers.Select(s => CreateEntryInformation(directoryPath + s.Name, s.Name, true));
+        }
+
+        /// <summary>
+        /// Gets the server shares.
+        /// </summary>
+        /// <param name="directoryPath">The directory path.</param>
+        /// <returns></returns>
+        private static IEnumerable<OneEntryInformation> GetServerShares(OnePath directoryPath)
+        {
+            var shares = NetworkHelper.NetShareEnum(directoryPath.Host);
+            return shares.Select(s => CreateEntryInformation(directoryPath + s.netname, s.netname, true));
         }
 
         /// <summary>
@@ -153,7 +177,7 @@ namespace ArxOne.OneFilesystem.Protocols.File
         /// </summary>
         /// <param name="directoryPath">The directory path.</param>
         /// <returns></returns>
-        private static IEnumerable<OneEntryInformation> EnumerateDefaultEntries(OnePath directoryPath)
+        private static IEnumerable<OneEntryInformation> GetDefaultChildren(OnePath directoryPath)
         {
             var localPath = GetLocalPath(directoryPath) + Path.DirectorySeparatorChar;
             if (File.Exists(localPath))
