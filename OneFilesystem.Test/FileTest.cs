@@ -75,7 +75,9 @@ namespace ArxOne.OneFilesystem.Test
         {
             using (var oneFilesystem = new OneFilesystem())
             {
-                var aServer = oneFilesystem.GetChildren("file://").First();
+                var aServer = oneFilesystem.GetChildren("file://").FirstOrDefault();
+                if(aServer==null)
+                    Assert.Inconclusive("No file server found here");
                 var shares = oneFilesystem.GetChildren(aServer).ToList();
             }
         }
