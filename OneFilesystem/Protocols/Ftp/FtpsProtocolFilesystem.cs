@@ -4,9 +4,12 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
+
 namespace ArxOne.OneFilesystem.Protocols.Ftp
 {
+    using System;
     using System.Net;
+    using System.Net.Sockets;
     using ArxOne.Ftp;
 
     public class FtpsProtocolFilesystem : FtpProtocolFilesystem
@@ -21,8 +24,8 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
             get { return FtpProtocol.FtpS; }
         }
 
-        public FtpsProtocolFilesystem(ICredentialsByHost credentialsByHost)
-            : base(credentialsByHost)
+        public FtpsProtocolFilesystem(ICredentialsByHost credentialsByHost, Func<EndPoint, Socket> proxy)
+            : base(credentialsByHost, proxy)
         {
         }
     }

@@ -12,6 +12,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Net.Sockets;
     using ArxOne.Ftp;
     using ArxOne.Ftp.Exceptions;
 
@@ -22,6 +23,8 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
     public class FtpProtocolFilesystem : IOneProtocolFilesystem
     {
         private readonly ICredentialsByHost _credentialsByHost;
+        private readonly Func<EndPoint, Socket> _proxy;
+
         private readonly IDictionary<Tuple<FtpProtocol, string, int>, FtpClient> _clients
             = new Dictionary<Tuple<FtpProtocol, string, int>, FtpClient>();
 
@@ -42,12 +45,14 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         protected virtual int DefaultPort { get { return 21; } }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FtpProtocolFilesystem"/> class.
+        /// Initializes a new instance of the <see cref="FtpProtocolFilesystem" /> class.
         /// </summary>
         /// <param name="credentialsByHost">The credentials by host.</param>
-        public FtpProtocolFilesystem(ICredentialsByHost credentialsByHost)
+        /// <param name="proxy">The proxy.</param>
+        public FtpProtocolFilesystem(ICredentialsByHost credentialsByHost, Func<EndPoint, Socket> proxy)
         {
             _credentialsByHost = credentialsByHost;
+            _proxy = proxy;
         }
 
         /// <summary>
@@ -72,7 +77,8 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
                 FtpClient ftpClient;
                 if (_clients.TryGetValue(key, out ftpClient))
                     return ftpClient;
-                _clients[key] = ftpClient = new FtpClient(FtpProtocol, path.Host, port, GetNetworkCredential(path.GetRoot()));
+                _clients[key] = ftpClient = new FtpClient(FtpProtocol, path.Host, port, GetNetworkCredential(path.GetRoot()),
+                    new FtpClientParameters { ProxyConnect = _proxy });
                 return ftpClient;
             }
         }

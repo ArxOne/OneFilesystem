@@ -4,6 +4,7 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
+
 namespace ArxOne.OneFilesystem
 {
     using System;
@@ -11,11 +12,15 @@ namespace ArxOne.OneFilesystem
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Net.Sockets;
     using Protocols;
     using Protocols.File;
     using Protocols.Ftp;
     using Protocols.Sftp;
 
+    /// <summary>
+    /// OneFilesystem implementation
+    /// </summary>
     public class OneFilesystem : IOneFilesystem, IDisposable
     {
         private readonly Dictionary<string, IList<IOneProtocolFilesystem>> _protocolFilesystemsByProtocol;
@@ -26,9 +31,10 @@ namespace ArxOne.OneFilesystem
         /// </summary>
         /// <param name="credentialsByHost">The credentials by host.</param>
         /// <param name="protocolFilesystems">The protocol filesystems.</param>
-        public OneFilesystem(ICredentialsByHost credentialsByHost = null, IOneProtocolFilesystem[] protocolFilesystems = null)
+        /// <param name="proxy">The proxy.</param>
+        public OneFilesystem(ICredentialsByHost credentialsByHost = null, IOneProtocolFilesystem[] protocolFilesystems = null, Func<EndPoint, Socket> proxy = null)
         {
-            var validProtocolFilesystems = protocolFilesystems ?? CreateDefaultFilesystems(credentialsByHost);
+            var validProtocolFilesystems = protocolFilesystems ?? CreateDefaultFilesystems(credentialsByHost, proxy);
             _protocolFilesystemsByProtocol = validProtocolFilesystems.Where(p => p.Protocol != null)
                 .GroupBy(p => p.Protocol)
                 .ToDictionary(p => p.Key, p => (IList<IOneProtocolFilesystem>)p.ToList());
@@ -39,13 +45,14 @@ namespace ArxOne.OneFilesystem
         /// Creates the default filesystems.
         /// </summary>
         /// <param name="credentialsByHost">The credentials by host.</param>
+        /// <param name="proxy"></param>
         /// <returns></returns>
-        private static IOneProtocolFilesystem[] CreateDefaultFilesystems(ICredentialsByHost credentialsByHost)
+        private static IOneProtocolFilesystem[] CreateDefaultFilesystems(ICredentialsByHost credentialsByHost, Func<EndPoint, Socket> proxy)
         {
             return new IOneProtocolFilesystem[]
             {
-                new FileProtocolFilesystem(), new FtpProtocolFilesystem(credentialsByHost),
-                new FtpesProtocolFilesystem(credentialsByHost), new FtpsProtocolFilesystem(credentialsByHost),
+                new FileProtocolFilesystem(), new FtpProtocolFilesystem(credentialsByHost, proxy),
+                new FtpesProtocolFilesystem(credentialsByHost,proxy), new FtpsProtocolFilesystem(credentialsByHost, proxy),
                 new SftpProtocolFilesystem(credentialsByHost),
             };
         }

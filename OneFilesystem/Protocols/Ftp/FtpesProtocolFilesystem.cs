@@ -6,7 +6,9 @@
 #endregion
 namespace ArxOne.OneFilesystem.Protocols.Ftp
 {
+    using System;
     using System.Net;
+    using System.Net.Sockets;
     using ArxOne.Ftp;
 
     public class FtpesProtocolFilesystem : FtpProtocolFilesystem
@@ -21,8 +23,8 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
             get { return FtpProtocol.FtpES; }
         }
 
-        public FtpesProtocolFilesystem(ICredentialsByHost credentialsByHost)
-            : base(credentialsByHost)
+        public FtpesProtocolFilesystem(ICredentialsByHost credentialsByHost, Func<EndPoint, Socket> proxy)
+            : base(credentialsByHost, proxy)
         {
         }
     }
