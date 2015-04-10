@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneFilesystem", "OneFilesystem\OneFilesystem.csproj", "{850549FD-F6D6-454E-9A0B-A244648F6B3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneFilesystem.Test", "OneFilesystem.Test\OneFilesystem.Test.csproj", "{C27F2574-C68E-4A80-A443-886C4ABE514B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{EA5526CA-C5B7-42BA-8A0F-B118C3CEBBD7}"
 	ProjectSection(SolutionItems) = preProject
-		ci-build.bat = ci-build.bat
+		appveyor.yml = appveyor.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FA9E59B2-D7A2-4107-A636-71C232D26ABC}"
