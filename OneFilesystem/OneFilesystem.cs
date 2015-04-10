@@ -4,6 +4,7 @@
 // https://github.com/ArxOne/OneFilesystem
 // Released under MIT license http://opensource.org/licenses/MIT
 #endregion
+
 namespace ArxOne.OneFilesystem
 {
     using System;
@@ -11,11 +12,15 @@ namespace ArxOne.OneFilesystem
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Net.Sockets;
     using Protocols;
     using Protocols.File;
     using Protocols.Ftp;
     using Protocols.Sftp;
 
+    /// <summary>
+    /// OneFilesystem implementation
+    /// </summary>
     public class OneFilesystem : IOneFilesystem, IDisposable
     {
         private readonly Dictionary<string, IList<IOneProtocolFilesystem>> _protocolFilesystemsByProtocol;
@@ -29,6 +34,7 @@ namespace ArxOne.OneFilesystem
         /// <param name="protocolFilesystems">The protocol filesystems.</param>
         public OneFilesystem(ICredentialsByHost credentialsByHost = null, OneFilesystemParameters parameters = null, IOneProtocolFilesystem[] protocolFilesystems = null)
         {
+            parameters = parameters ?? OneFilesystemParameters.Default;
             var validProtocolFilesystems = protocolFilesystems ?? CreateDefaultFilesystems(credentialsByHost, parameters);
             _protocolFilesystemsByProtocol = validProtocolFilesystems.Where(p => p.Protocol != null)
                 .GroupBy(p => p.Protocol)

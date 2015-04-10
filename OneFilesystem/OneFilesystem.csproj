@@ -38,8 +38,10 @@
     <AssemblyOriginatorKeyFile>Properties\OneFilesystem.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ArxOne.Ftp">
-      <HintPath>..\packages\ArxOne.Ftp.1.0.0.0\lib\net40-Client\ArxOne.Ftp.dll</HintPath>
+    <Reference Include="ArxOne.Ftp, Version=1.2.1.0, Culture=neutral, PublicKeyToken=da7223da01d9ab51, processorArchitecture=MSIL">
+      <HintPath>..\packages\ArxOne.Ftp.1.2.1.0\lib\net40-Client\ArxOne.Ftp.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
     </Reference>
     <Reference Include="LanExchange.Network">
       <HintPath>..\packages\LanExchange.Network.1.0.0.0\lib\net40\LanExchange.Network.dll</HintPath>
