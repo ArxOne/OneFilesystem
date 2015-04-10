@@ -25,10 +25,11 @@ namespace ArxOne.OneFilesystem
         /// Initializes a new instance of the <see cref="OneFilesystem" /> class.
         /// </summary>
         /// <param name="credentialsByHost">The credentials by host.</param>
+        /// <param name="parameters">The parameters.</param>
         /// <param name="protocolFilesystems">The protocol filesystems.</param>
-        public OneFilesystem(ICredentialsByHost credentialsByHost = null, IOneProtocolFilesystem[] protocolFilesystems = null)
+        public OneFilesystem(ICredentialsByHost credentialsByHost = null, OneFilesystemParameters parameters = null, IOneProtocolFilesystem[] protocolFilesystems = null)
         {
-            var validProtocolFilesystems = protocolFilesystems ?? CreateDefaultFilesystems(credentialsByHost);
+            var validProtocolFilesystems = protocolFilesystems ?? CreateDefaultFilesystems(credentialsByHost, parameters);
             _protocolFilesystemsByProtocol = validProtocolFilesystems.Where(p => p.Protocol != null)
                 .GroupBy(p => p.Protocol)
                 .ToDictionary(p => p.Key, p => (IList<IOneProtocolFilesystem>)p.ToList());
@@ -39,14 +40,15 @@ namespace ArxOne.OneFilesystem
         /// Creates the default filesystems.
         /// </summary>
         /// <param name="credentialsByHost">The credentials by host.</param>
+        /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
-        private static IOneProtocolFilesystem[] CreateDefaultFilesystems(ICredentialsByHost credentialsByHost)
+        private static IOneProtocolFilesystem[] CreateDefaultFilesystems(ICredentialsByHost credentialsByHost, OneFilesystemParameters parameters)
         {
             return new IOneProtocolFilesystem[]
             {
-                new FileProtocolFilesystem(), new FtpProtocolFilesystem(credentialsByHost),
-                new FtpesProtocolFilesystem(credentialsByHost), new FtpsProtocolFilesystem(credentialsByHost),
-                new SftpProtocolFilesystem(credentialsByHost),
+                new FileProtocolFilesystem(parameters), new FtpProtocolFilesystem(credentialsByHost, parameters),
+                new FtpesProtocolFilesystem(credentialsByHost, parameters), new FtpsProtocolFilesystem(credentialsByHost, parameters),
+                new SftpProtocolFilesystem(credentialsByHost, parameters),
             };
         }
 

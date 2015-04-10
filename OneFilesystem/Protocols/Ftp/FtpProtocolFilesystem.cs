@@ -45,7 +45,8 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         /// Initializes a new instance of the <see cref="FtpProtocolFilesystem"/> class.
         /// </summary>
         /// <param name="credentialsByHost">The credentials by host.</param>
-        public FtpProtocolFilesystem(ICredentialsByHost credentialsByHost)
+        /// <param name="parameters"></param>
+        public FtpProtocolFilesystem(ICredentialsByHost credentialsByHost, OneFilesystemParameters parameters)
         {
             _credentialsByHost = credentialsByHost;
         }

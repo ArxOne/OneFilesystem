@@ -61,6 +61,7 @@
     <Compile Include="IO\VirtualStream.cs" />
     <Compile Include="OneFilesystem.cs" />
     <Compile Include="OneEntryInformation.cs" />
+    <Compile Include="OneFilesystemParameters.cs" />
     <Compile Include="OnePath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocols\File\FileProtocolFilesystem.cs" />

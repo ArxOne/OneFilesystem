@@ -21,8 +21,8 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
             get { return FtpProtocol.FtpES; }
         }
 
-        public FtpesProtocolFilesystem(ICredentialsByHost credentialsByHost)
-            : base(credentialsByHost)
+        public FtpesProtocolFilesystem(ICredentialsByHost credentialsByHost, OneFilesystemParameters parameters)
+            : base(credentialsByHost, parameters)
         {
         }
     }

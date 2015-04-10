@@ -40,7 +40,8 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
         /// Initializes a new instance of the <see cref="SftpProtocolFilesystem"/> class.
         /// </summary>
         /// <param name="credentialsByHost">The credentials by host.</param>
-        public SftpProtocolFilesystem(ICredentialsByHost credentialsByHost)
+        /// <param name="parameters"></param>
+        public SftpProtocolFilesystem(ICredentialsByHost credentialsByHost, OneFilesystemParameters parameters)
         {
             _credentialsByHost = credentialsByHost;
         }

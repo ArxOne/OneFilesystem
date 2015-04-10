@@ -39,6 +39,14 @@ namespace ArxOne.OneFilesystem.Protocols.File
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="FileProtocolFilesystem"/> class.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        public FileProtocolFilesystem(OneFilesystemParameters parameters)
+        {
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
