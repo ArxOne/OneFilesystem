@@ -12,7 +12,6 @@ namespace ArxOne.OneFilesystem
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Net.Sockets;
     using Protocols;
     using Protocols.File;
     using Protocols.Ftp;

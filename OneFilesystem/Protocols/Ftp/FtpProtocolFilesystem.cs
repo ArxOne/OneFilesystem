@@ -25,6 +25,8 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         private readonly IDictionary<Tuple<FtpProtocol, string, int>, FtpClient> _clients
             = new Dictionary<Tuple<FtpProtocol, string, int>, FtpClient>();
 
+        private FtpClientParameters _parameters;
+
         /// <summary>
         /// Gets the protocol.
         /// If this is null, then the Handle() method has to be called to see if the file is handled here
@@ -49,6 +51,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         public FtpProtocolFilesystem(ICredentialsByHost credentialsByHost, OneFilesystemParameters parameters)
         {
             _credentialsByHost = credentialsByHost;
+            _parameters = new FtpClientParameters { ProxyConnect = parameters.ConnectProxy };
         }
 
         /// <summary>
@@ -73,7 +76,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
                 FtpClient ftpClient;
                 if (_clients.TryGetValue(key, out ftpClient))
                     return ftpClient;
-                _clients[key] = ftpClient = new FtpClient(FtpProtocol, path.Host, port, GetNetworkCredential(path.GetRoot()));
+                _clients[key] = ftpClient = new FtpClient(FtpProtocol, path.Host, port, GetNetworkCredential(path.GetRoot()), _parameters);
                 return ftpClient;
             }
         }
