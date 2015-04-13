@@ -8,6 +8,10 @@ namespace ArxOne.OneFilesystem.Protocols
 {
     using System;
 
+    /// <summary>
+    /// Interface for handled protocol and related filesystem.
+    /// Implement this to create your own custom filesystem and add it as paramter to <see cref="OneFilesystem"/> constructor.
+    /// </summary>
     public interface IOneProtocolFilesystem : IDisposable, IOneFilesystem
     {
         /// <summary>

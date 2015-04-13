@@ -9,6 +9,10 @@ namespace ArxOne.OneFilesystem
     using System.Collections.Generic;
     using System.IO;
 
+    /// <summary>
+    /// Filesystem interface.
+    /// This is main application logic.
+    /// </summary>
     public interface IOneFilesystem
     {
         /// <summary>

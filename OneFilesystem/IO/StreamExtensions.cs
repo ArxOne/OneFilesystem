@@ -9,10 +9,13 @@ namespace ArxOne.OneFilesystem.IO
 {
     using System.IO;
 
+    /// <summary>
+    /// Extensions to <see cref="Stream"/>
+    /// </summary>
     public static class StreamExtensions
     {
         /// <summary>
-        /// Reads all data from stream.
+        /// Reads all data from stream (as much as possible).
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <param name="buffer">The buffer.</param>

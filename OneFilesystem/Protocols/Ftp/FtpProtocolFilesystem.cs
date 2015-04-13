@@ -39,8 +39,20 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
             get { return "ftp"; }
         }
 
+        /// <summary>
+        /// Gets the FTP protocol.
+        /// </summary>
+        /// <value>
+        /// The FTP protocol.
+        /// </value>
         protected virtual FtpProtocol FtpProtocol { get { return FtpProtocol.Ftp; } }
 
+        /// <summary>
+        /// Gets the default port.
+        /// </summary>
+        /// <value>
+        /// The default port.
+        /// </value>
         protected virtual int DefaultPort { get { return 21; } }
 
         /// <summary>

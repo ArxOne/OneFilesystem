@@ -24,6 +24,9 @@ namespace ArxOne.OneFilesystem
         /// </value>
         public Func<EndPoint, Socket> ConnectProxy { get; set; }
 
+        /// <summary>
+        /// Default parameters (for lazy people... Like me)
+        /// </summary>
         public readonly static OneFilesystemParameters Default = new OneFilesystemParameters();
     }
 }

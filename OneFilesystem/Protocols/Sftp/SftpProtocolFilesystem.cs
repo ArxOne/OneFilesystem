@@ -18,6 +18,9 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
     using Renci.SshNet.Sftp;
     using Session;
 
+    /// <summary>
+    /// SFTP protocol
+    /// </summary>
     public class SftpProtocolFilesystem : IOneProtocolFilesystem
     {
         private const int DefaultPort = 22;
@@ -203,7 +206,14 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
             }
         }
 
-        public Stream CreateFile(OnePath filePath)
+        /// <summary>
+        /// Creates the file and returns a writable stream.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns>
+        /// A writable stream or null if creation fails (entry exists or path not found)
+        /// </returns>
+        Stream IOneFilesystem.CreateFile(OnePath filePath)
         {
             var client = GetClient(filePath);
             try
@@ -219,7 +229,14 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
             return null;
         }
 
-        public bool CreateDirectory(OnePath directoryPath)
+        /// <summary>
+        /// Creates the directory.
+        /// </summary>
+        /// <param name="directoryPath">The directory path.</param>
+        /// <returns>
+        /// true if directory was created
+        /// </returns>
+        bool IOneFilesystem.CreateDirectory(OnePath directoryPath)
         {
             var parentPath = directoryPath.GetParent();
             using (var client = GetClient(parentPath))

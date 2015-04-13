@@ -18,6 +18,10 @@ namespace ArxOne.OneFilesystem.Session
         private readonly Func<TSession, bool> _isValid;
         private readonly Queue<TSession> _sessions = new Queue<TSession>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClientSessionProvider{TSession}"/> class.
+        /// </summary>
+        /// <param name="isValid">The is valid.</param>
         public ClientSessionProvider(Func<TSession, bool> isValid)
         {
             _isValid = isValid;

@@ -21,4 +21,7 @@
       <dependency id="SSH.NET" version="[2014.4.6,)" />
     </dependencies>
   </metadata>
+  <files>
+    <file src="$ProjectDir$bin\$ConfigurationName$\OneFilesystem.xml" target="lib\net40-Client"/>
+  </files>
 </package>

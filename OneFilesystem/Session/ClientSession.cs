@@ -15,7 +15,14 @@ namespace ArxOne.OneFilesystem.Session
     public class ClientSession<TSession> : IDisposable
     {
         private readonly ClientSessionProvider<TSession> _sessionProvider;
-        public TSession Session { get; set; }
+    
+        /// <summary>
+        /// Gets the session.
+        /// </summary>
+        /// <value>
+        /// The session.
+        /// </value>
+        public TSession Session { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientSession{TSession}"/> class.
