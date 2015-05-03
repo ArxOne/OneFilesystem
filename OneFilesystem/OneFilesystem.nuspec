@@ -18,7 +18,7 @@
     <developmentDependency>false</developmentDependency>
     <dependencies>
       <dependency id="ArxOne.Ftp" />
-      <dependency id="SSH.NET" version="[2014.4.6,)" />
+      <dependency id="SSH.NET" version="2014.4.6-beta2" />
     </dependencies>
   </metadata>
   <files>
