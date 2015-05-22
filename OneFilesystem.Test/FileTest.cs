@@ -76,6 +76,7 @@ namespace ArxOne.OneFilesystem.Test
             using (var oneFilesystem = new OneFilesystem())
             {
                 var firstEntry = oneFilesystem.GetChildren("file://").First();
+                Assert.AreEqual("localhost", firstEntry.Host);
             }
         }
 
