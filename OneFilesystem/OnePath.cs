@@ -307,5 +307,4 @@ namespace ArxOne.OneFilesystem
             return new OnePath(pathOrUri);
         }
     }
-
 }

@@ -10,6 +10,8 @@ namespace ArxOne.OneFilesystem.Protocols.File
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
     using LanExchange.Network;
     using LanExchange.Network.Models;
 
@@ -23,7 +25,7 @@ namespace ArxOne.OneFilesystem.Protocols.File
             LocalComputer,
             Server,
             Default,
-            NetworkRoot
+            ServersRoot
         }
 
         /// <summary>
@@ -72,7 +74,7 @@ namespace ArxOne.OneFilesystem.Protocols.File
             if (entryPath.Path.Count > 0)
                 return NodeType.Default;
             if (entryPath.Host == null)
-                return NodeType.NetworkRoot;
+                return NodeType.ServersRoot;
             if (IsLocalhost(entryPath))
                 return NodeType.LocalComputer;
             return NodeType.Server;
@@ -118,8 +120,8 @@ namespace ArxOne.OneFilesystem.Protocols.File
                     return GetLocalComputerChildren(directoryPath);
                 case NodeType.Default:
                     return GetDefaultChildren(directoryPath);
-                case NodeType.NetworkRoot:
-                    return GetNetworkServers(directoryPath);
+                case NodeType.ServersRoot:
+                    return GetServers(directoryPath);
                 case NodeType.Server:
                     return GetServerShares(directoryPath);
                 default:
@@ -163,10 +165,27 @@ namespace ArxOne.OneFilesystem.Protocols.File
         /// </summary>
         /// <param name="directoryPath">The directory path.</param>
         /// <returns></returns>
-        private static IEnumerable<OneEntryInformation> GetNetworkServers(OnePath directoryPath)
+        private static IEnumerable<OneEntryInformation> GetServers(OnePath directoryPath)
         {
+            yield return new OneEntryInformation("file://localhost", true);
             var servers = NetworkHelper.NetServerEnum<ServerInfo100>(100, null, SoftwareTypes.SV_TYPE_ALL);
-            return servers.Select(s => CreateEntryInformation(directoryPath + s.Name, s.Name, true));
+            foreach (var server in servers)
+            {
+                if (IsLocalhost(server.Name))
+                    continue;
+                yield return CreateEntryInformation(directoryPath + server.Name, server.Name, true);
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the specified server name is localhost.
+        /// </summary>
+        /// <param name="serverName">Name of the server.</param>
+        /// <returns></returns>
+        private static bool IsLocalhost(string serverName)
+        {
+            // laziness can come in many flavors (but does the job)
+            return string.Equals(serverName, Environment.MachineName, StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <summary>

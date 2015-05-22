@@ -71,12 +71,23 @@ namespace ArxOne.OneFilesystem.Test
         [TestMethod]
         [TestCategory("File")]
         [TestCategory("Local")]
+        public void GetLocalhostTest()
+        {
+            using (var oneFilesystem = new OneFilesystem())
+            {
+                var firstEntry = oneFilesystem.GetChildren("file://").First();
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("File")]
+        [TestCategory("Local")]
         public void GetFileSharesTest()
         {
             using (var oneFilesystem = new OneFilesystem())
             {
                 var aServer = oneFilesystem.GetChildren("file://").FirstOrDefault();
-                if(aServer==null)
+                if (aServer == null)
                     Assert.Inconclusive("No file server found here");
                 var shares = oneFilesystem.GetChildren(aServer).ToList();
             }
