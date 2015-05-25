@@ -90,5 +90,29 @@ namespace ArxOne.OneFilesystem.Test
             Assert.AreEqual(null, p.Port);
             Assert.AreEqual(0, p.Path.Count);
         }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void LiteralLocalTest()
+        {
+            var p = new OnePath("file://localhost/C:/Windows");
+            Assert.AreEqual(@"C:\Windows", p.Literal);
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void LiteralShareTest()
+        {
+            var p = new OnePath("file://host/C:/Windows");
+            Assert.AreEqual(@"\\host\C:\Windows", p.Literal);
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void LiteralServerTest()
+        {
+            var p = new OnePath("file://host");
+            Assert.AreEqual(@"\\host", p.Literal);
+        }
     }
 }

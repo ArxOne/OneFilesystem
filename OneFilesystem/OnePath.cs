@@ -16,7 +16,7 @@ namespace ArxOne.OneFilesystem
     /// Represents a path
     /// </summary>
     [DebuggerDisplay("{Uri}")]
-    public class OnePath
+    public partial class OnePath
     {
         private static readonly char[] Separators = { System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar };
 
@@ -34,6 +34,16 @@ namespace ArxOne.OneFilesystem
         /// The host.
         /// </value>
         public string Host { get; private set; }
+
+        /// <summary>
+        /// Determines whether this path is localhost.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLocalHost
+        {
+            get { return Host != null && string.Equals(Host, Localhost, StringComparison.InvariantCultureIgnoreCase); }
+        }
+
         /// <summary>
         /// Gets the port.
         /// </summary>
@@ -75,11 +85,31 @@ namespace ArxOne.OneFilesystem
         {
             get
             {
-                return new Uri(string.Format("{0}://{1}{2}{3}/{4}",
-                    Protocol, Host ?? "",
-                    Port.HasValue ? ":" : "", Port.HasValue ? Port.Value.ToString() : "",
-                    string.Join("/", Path)));
+                return new Uri(GetLiteralUri());
             }
+        }
+
+        /// <summary>
+        /// Gets the literal URI.
+        /// </summary>
+        /// <returns></returns>
+        private string GetLiteralUri()
+        {
+            return string.Format("{0}://{1}{2}{3}/{4}",
+                Protocol, Host ?? "",
+                Port.HasValue ? ":" : "", Port.HasValue ? Port.Value.ToString() : "",
+                string.Join("/", Path));
+        }
+
+        /// <summary>
+        /// Gets the literal path.
+        /// </summary>
+        /// <value>
+        /// The literal.
+        /// </value>
+        public string Literal
+        {
+            get { return GetLiteralWin32() ?? GetLiteralUri(); }
         }
 
         /// <summary>
@@ -96,21 +126,6 @@ namespace ArxOne.OneFilesystem
         }
 
         /// <summary>
-        /// Initializes instance with the specified URI.
-        /// </summary>
-        /// <param name="uri">The URI.</param>
-        private void Init(Uri uri)
-        {
-            Protocol = uri.Scheme;
-            Host = uri.Host;
-            if (Host == "")
-                Host = null;
-            if (uri.Port >= 0)
-                Port = uri.Port;
-            Path = MakePath(uri.AbsolutePath.Split('/'));
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="OnePath"/> class.
         /// </summary>
         /// <param name="localPathOrUri">The local path or URI.</param>
@@ -120,56 +135,10 @@ namespace ArxOne.OneFilesystem
             if (localPathOrUri == null)
                 throw new ArgumentNullException("localPathOrUri");
 
-            // first, let's check for a disguised URI
-            if (localPathOrUri.Contains("://"))
-            {
-                try
-                {
-                    Init(new Uri(localPathOrUri));
-                    return;
-                }
-                catch (UriFormatException)
-                {
-                }
-            }
-
-            Protocol = Uri.UriSchemeFile;
-            // otherwise, this is a local path
-            // first, look for a simple network root "\\"
-            if (localPathOrUri == @"\\")
-            {
-                Path = new string[0];
+            if (LoadUri(localPathOrUri) || LoadNetworkRootWin32(localPathOrUri) || LoadNetworkServerWin32(localPathOrUri) || LoadWin32(localPathOrUri))
                 return;
-            }
-            // then, for a server "\\server" or "\\server\"
-            if (localPathOrUri.StartsWith(@"\\"))
-            {
-                var server = localPathOrUri.Trim('\\');
-                if (!server.Contains('\\'))
-                {
-                    Host = server;
-                    Path = new string[0];
-                    return;
-                }
-            }
-            // otherwise, standard path
-            var fullPath = System.IO.Path.GetFullPath(localPathOrUri);
-            var allParts = fullPath.Split(Separators);
-            if (allParts.Length > 2 && allParts[0] == "" && allParts[1] == "")
-            {
-                // remote path
-                var partsList = allParts.ToList();
-                while (partsList.Count > 0 && string.IsNullOrEmpty(partsList[0]))
-                    partsList.RemoveAt(0);
-                Host = partsList[0];
-                Path = MakePath(partsList.Skip(1));
-            }
-            else
-            {
-                // localpath here
-                Host = "localhost";
-                Path = MakePath(allParts);
-            }
+
+            throw new ArgumentException("localPathOrUri");
         }
 
         /// <summary>

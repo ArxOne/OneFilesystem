@@ -69,6 +69,7 @@
     <Compile Include="OneEntryInformation.cs" />
     <Compile Include="OneFilesystemParameters.cs" />
     <Compile Include="OnePath.cs" />
+    <Compile Include="OnePath.Translate.cs" />
     <Compile Include="OnePathExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocols\File\FileProtocolFilesystem.cs" />

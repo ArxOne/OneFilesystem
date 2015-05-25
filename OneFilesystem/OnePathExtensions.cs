@@ -25,15 +25,5 @@ namespace ArxOne.OneFilesystem
             for (var currentPath = onePath; currentPath != null; currentPath = currentPath.GetParent())
                 yield return currentPath;
         }
-
-        /// <summary>
-        /// Determines whether this path is localhost.
-        /// </summary>
-        /// <param name="onePath">The one path.</param>
-        /// <returns></returns>
-        public static bool IsLocalhost(this OnePath onePath)
-        {
-            return onePath.Host != null && string.Equals(onePath.Host, "localhost", StringComparison.InvariantCultureIgnoreCase);
-        }
     }
 }
