@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\OneFilesystemAccessDeniedException.cs" />
     <Compile Include="Exceptions\OneFilesystemException.cs" />
     <Compile Include="Exceptions\OneFilesystemProtocolException.cs" />
     <Compile Include="Exceptions\OneFilesystemTransportException.cs" />

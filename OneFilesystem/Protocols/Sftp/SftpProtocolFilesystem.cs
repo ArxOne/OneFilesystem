@@ -12,6 +12,7 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Net.Sockets;
     using Exceptions;
     using Renci.SshNet;
     using Renci.SshNet.Common;
@@ -77,7 +78,14 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
             var host = path.Host;
             var port = path.Port ?? DefaultPort;
             var networkCredential = GetNetworkCredential(path);
-            return _sessionProvider.Get(host, port, networkCredential.UserName, () => CreateClient(host, port, networkCredential));
+            try
+            {
+                return _sessionProvider.Get(host, port, networkCredential.UserName, () => CreateClient(host, port, networkCredential));
+            }
+            catch (SshAuthenticationException e)
+            {
+                throw new OneFilesystemAccessDeniedException("Access denied", e);
+            }
         }
 
         /// <summary>
@@ -101,11 +109,11 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
         /// <returns></returns>
         protected NetworkCredential GetNetworkCredential(OnePath path)
         {
-            var anonymous = new NetworkCredential();
+            var anonymous = new NetworkCredential("anonymous", "someone@somewhere");
             if (_credentialsByHost == null)
                 return anonymous;
             var networkContext = _credentialsByHost.GetCredential(path.Host, path.Port ?? DefaultPort, Protocol);
-            if (string.IsNullOrEmpty(networkContext.UserName))
+            if (networkContext == null || string.IsNullOrEmpty(networkContext.UserName))
                 return anonymous;
             return networkContext;
         }
@@ -156,10 +164,16 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
         /// <returns></returns>
         OneEntryInformation IOneFilesystem.GetInformation(OnePath entryPath)
         {
-            using (var client = GetClient(entryPath))
+            try
             {
-                return CreateEntry(entryPath, client.Session.Get(GetLocalPath(entryPath)));
+                using (var client = GetClient(entryPath))
+                    return CreateEntry(entryPath, client.Session.Get(GetLocalPath(entryPath)));
             }
+            catch (SftpPathNotFoundException)
+            { }
+            catch (SocketException)
+            { }
+            return null;
         }
 
         /// <summary>

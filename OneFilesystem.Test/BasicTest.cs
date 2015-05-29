@@ -7,6 +7,7 @@ namespace ArxOne.OneFilesystem.Test
     using System.Linq;
     using System.Net;
     using System.Web;
+    using Exceptions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -179,5 +180,110 @@ namespace ArxOne.OneFilesystem.Test
                 }
             }
         }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Ftp")]
+        [ExpectedException(typeof(OneFilesystemAccessDeniedException))]
+        public void FtpAnonymousFindHostTest()
+        {
+            FindHostTest("ftp", true);
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Ftp")]
+        public void FtpFindHostTest()
+        {
+            FindHostTest("ftp", false);
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Sftp")]
+        [ExpectedException(typeof(OneFilesystemAccessDeniedException))]
+        public void SftpAnonymousFindHostTest()
+        {
+            FindHostTest("sftp", true);
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Sftp")]
+        public void SftpFindHostTest()
+        {
+            FindHostTest("sftp", false);
+        }
+
+        public void FindHostTest(string protocol, bool anonymous)
+        {
+            var t = GetTestCredential(protocol);
+            using (var fs = new OneFilesystem(anonymous ? (ICredentialsByHost)new CredentialCache() : t.Item2))
+            {
+                var i = fs.GetInformation(t.Item1.GetRoot());
+                Assert.IsNotNull(i);
+            }
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Ftp")]
+        public void FtpFileNotFoundTest()
+        {
+            FileNotFoundTest("ftp");
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Sftp")]
+        public void SftpFileNotFoundTest()
+        {
+            FileNotFoundTest("sftp");
+        }
+
+        public void FileNotFoundTest(string protocol)
+        {
+            var t = GetTestCredential(protocol);
+            using (var fs = new OneFilesystem(t.Item2))
+            {
+                var i = fs.GetInformation(t.Item1.GetRoot() + "thisFileProbablyDoesNotExist!");
+                Assert.IsNull(i);
+            }
+        }
+        
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Ftp")]
+        public void FtpHostNotFoundTest()
+        {
+            HostNotFoundTest("ftp", "thisHostProbablyDoesNotExist");
+        }
+
+        [TestMethod]
+        [DeploymentItem("credentials.txt")]
+        [TestCategory("File")]
+        [TestCategory("Sftp")]
+        public void SftpHostNotFoundTest()
+        {
+            HostNotFoundTest("sftp", "thisHostProbablyDoesNotExist");
+        }
+
+        public void HostNotFoundTest(string protocol, string hostName)
+        {
+            var t = GetTestCredential(protocol);
+            using (var fs = new OneFilesystem(new CredentialCache()))
+            {
+                var i = fs.GetInformation(protocol + "://" + hostName);
+                Assert.IsNull(i);
+            }
+        }
+
     }
 }

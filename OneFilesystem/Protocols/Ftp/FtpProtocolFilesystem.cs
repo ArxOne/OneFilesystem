@@ -14,6 +14,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
     using System.Net;
     using ArxOne.Ftp;
     using ArxOne.Ftp.Exceptions;
+    using Exceptions;
 
     /// <summary>
     /// FTP protocol filesystem.
@@ -25,7 +26,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         private readonly IDictionary<Tuple<FtpProtocol, string, int>, FtpClient> _clients
             = new Dictionary<Tuple<FtpProtocol, string, int>, FtpClient>();
 
-        private FtpClientParameters _parameters;
+        private readonly FtpClientParameters _parameters;
 
         /// <summary>
         /// Gets the protocol.
@@ -138,7 +139,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
             if (_credentialsByHost == null)
                 return anonymous;
             var networkContext = _credentialsByHost.GetCredential(path.Host, path.Port ?? DefaultPort, Protocol);
-            if (string.IsNullOrEmpty(networkContext.UserName))
+            if (networkContext == null || string.IsNullOrEmpty(networkContext.UserName))
                 return anonymous;
             return networkContext;
         }
@@ -163,10 +164,34 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         /// <returns>
         /// Information or null if entry is not found
         /// </returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public OneEntryInformation GetInformation(OnePath entryPath)
         {
+            if (entryPath.Path.Count == 0)
+                return GetHostInformation(entryPath);
             return GetChildren(entryPath.GetParent()).SingleOrDefault(n => n.Name == entryPath.Name);
+        }
+
+        /// <summary>
+        /// Gets the host information.
+        /// </summary>
+        /// <param name="entryPath">The entry path.</param>
+        /// <returns></returns>
+        private OneEntryInformation GetHostInformation(OnePath entryPath)
+        {
+            try
+            {
+                var stat = GetFtpClient(entryPath).Stat("/");
+                if (stat != null)
+                    return new OneEntryInformation(entryPath, true);
+            }
+            catch (FtpProtocolException e)
+            {
+                if (e.Code == 530)
+                    throw new OneFilesystemAccessDeniedException("Access denied", e);
+            }
+            catch (FtpException)
+            { }
+            return null;
         }
 
         /// <summary>
