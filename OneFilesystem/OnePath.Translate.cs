@@ -23,8 +23,6 @@ namespace ArxOne.OneFilesystem
         {
             Protocol = uri.Scheme;
             Host = uri.Host;
-            if (Host == "")
-                Host = null;
             if (uri.Port >= 0)
                 Port = uri.Port;
             Path = MakePath(uri.AbsolutePath.Split('/'));

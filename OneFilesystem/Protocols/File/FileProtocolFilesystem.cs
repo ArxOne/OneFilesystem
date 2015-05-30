@@ -73,7 +73,7 @@ namespace ArxOne.OneFilesystem.Protocols.File
         {
             if (entryPath.Path.Count > 0)
                 return NodeType.Default;
-            if (entryPath.Host == null)
+            if (string.IsNullOrEmpty(entryPath.Host))
                 return NodeType.ServersRoot;
             if (IsLocalhost(entryPath))
                 return NodeType.LocalComputer;

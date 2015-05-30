@@ -52,7 +52,7 @@ namespace ArxOne.OneFilesystem.Test
         {
             var p = new OnePath(@"file://");
             Assert.AreEqual("file", p.Protocol);
-            Assert.IsNull(p.Host);
+            Assert.AreEqual("", p.Host);
             Assert.AreEqual(null, p.Port);
             Assert.AreEqual(0, p.Path.Count);
         }
