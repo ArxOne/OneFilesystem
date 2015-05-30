@@ -63,7 +63,7 @@ namespace ArxOne.OneFilesystem.Test
         {
             var p = new OnePath(@"\\");
             Assert.AreEqual("file", p.Protocol);
-            Assert.IsNull(p.Host);
+            Assert.AreEqual("", p.Host);
             Assert.AreEqual(null, p.Port);
             Assert.AreEqual(0, p.Path.Count);
         }
@@ -113,6 +113,38 @@ namespace ArxOne.OneFilesystem.Test
         {
             var p = new OnePath("file://host");
             Assert.AreEqual(@"\\host", p.Literal);
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void FileRootTest()
+        {
+            var p = new OnePath(@"\\");
+            Assert.AreEqual("file", p.Protocol);
+            Assert.AreEqual("", p.Host);
+            Assert.AreEqual(0, p.Path.Count);
+            Assert.AreEqual(@"\\", p.Literal);
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void RootTest()
+        {
+            var p = new OnePath(@"");
+            Assert.AreEqual("", p.Protocol);
+            Assert.AreEqual("", p.Host);
+            Assert.AreEqual(0, p.Path.Count);
+            Assert.AreEqual(@"", p.Literal);
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void ProtocolRootTest()
+        {
+            var p = new OnePath(@"ftp://");
+            Assert.AreEqual("ftp", p.Protocol);
+            Assert.AreEqual("", p.Host);
+            Assert.AreEqual(0, p.Path.Count);
         }
     }
 }

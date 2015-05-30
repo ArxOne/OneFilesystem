@@ -149,6 +149,8 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
         /// </returns>
         IEnumerable<OneEntryInformation> IOneFilesystem.GetChildren(OnePath directoryPath)
         {
+            if (directoryPath.Host == "")
+                return new OneEntryInformation[0];
             using (var client = GetClient(directoryPath))
             {
                 return client.Session.ListDirectory(GetLocalPath(directoryPath))

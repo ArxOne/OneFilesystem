@@ -153,6 +153,8 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         /// </returns>
         public IEnumerable<OneEntryInformation> GetChildren(OnePath directoryPath)
         {
+            if (directoryPath.Host == "")
+                return new OneEntryInformation[0];
             return GetFtpClient(directoryPath).StatEntries(GetLocalPath(directoryPath)).Select(entry => CreateEntryInformation(directoryPath, entry))
                 .Where(i => i != null).ToList();
         }

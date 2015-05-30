@@ -90,18 +90,6 @@ namespace ArxOne.OneFilesystem
         }
 
         /// <summary>
-        /// Gets the literal URI.
-        /// </summary>
-        /// <returns></returns>
-        private string GetLiteralUri()
-        {
-            return string.Format("{0}://{1}{2}{3}/{4}",
-                Protocol, Host ?? "",
-                Port.HasValue ? ":" : "", Port.HasValue ? Port.Value.ToString() : "",
-                string.Join("/", Path));
-        }
-
-        /// <summary>
         /// Gets the literal path.
         /// </summary>
         /// <value>
@@ -109,7 +97,7 @@ namespace ArxOne.OneFilesystem
         /// </value>
         public string Literal
         {
-            get { return GetLiteralWin32() ?? GetLiteralUri(); }
+            get { return GetLiteralRoot() ?? GetLiteralWin32() ?? GetLiteralUri(); }
         }
 
         /// <summary>
@@ -135,7 +123,8 @@ namespace ArxOne.OneFilesystem
             if (localPathOrUri == null)
                 throw new ArgumentNullException("localPathOrUri");
 
-            if (LoadUri(localPathOrUri) || LoadNetworkRootWin32(localPathOrUri) || LoadNetworkServerWin32(localPathOrUri) || LoadWin32(localPathOrUri))
+            if (LoadUri(localPathOrUri)
+               || LoadRootWin32(localPathOrUri) || LoadNetworkRootWin32(localPathOrUri) || LoadNetworkServerWin32(localPathOrUri) || LoadWin32(localPathOrUri))
                 return;
 
             throw new ArgumentException("localPathOrUri");
@@ -247,7 +236,7 @@ namespace ArxOne.OneFilesystem
         /// </returns>
         public static OnePath operator +(OnePath path, string entryName)
         {
-            if (path.Host == null)
+            if (string.IsNullOrEmpty(path.Host))
                 return new OnePath(path.Protocol, entryName, path.Port, new String[0]);
             return new OnePath(path.Protocol, path.Host, path.Port, path.Path.Concat(MakePath(entryName.Split(Separators))));
         }

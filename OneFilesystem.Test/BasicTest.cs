@@ -256,7 +256,7 @@ namespace ArxOne.OneFilesystem.Test
                 Assert.IsNull(i);
             }
         }
-        
+
         [TestMethod]
         [DeploymentItem("credentials.txt")]
         [TestCategory("File")]
@@ -285,5 +285,38 @@ namespace ArxOne.OneFilesystem.Test
             }
         }
 
+        [TestMethod]
+        [TestCategory("-")]
+        public void EnumerateProtocolsTest()
+        {
+            using (var fs = new OneFilesystem())
+            {
+                var p = new OnePath("");
+                var children = fs.GetChildren(p).ToArray();
+                Assert.IsTrue(children.Any(c => c.Protocol == "file"));
+                Assert.IsTrue(children.Any(c => c.Protocol == "ftp"));
+                Assert.IsTrue(children.Any(c => c.Protocol == "sftp"));
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Ftp")]
+        public void EnumerateFtpRootTest()
+        {
+            using (var fs = new OneFilesystem())
+            {
+                var c = fs.GetChildren("ftp://");
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Sftp")]
+        public void EnumerateSftpRootTest()
+        {
+            using (var fs = new OneFilesystem())
+            {
+                var c = fs.GetChildren("sftp://");
+            }
+        }
     }
 }

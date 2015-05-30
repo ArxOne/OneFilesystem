@@ -9,6 +9,7 @@ namespace ArxOne.OneFilesystem
 {
     using System;
     using System.Linq;
+    using System.Threading;
 
     partial class OnePath
     {
@@ -46,6 +47,14 @@ namespace ArxOne.OneFilesystem
                 }
                 catch (UriFormatException)
                 {
+                    var parts = localPathOrUri.Split(new[] { "://" }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length == 1)
+                    {
+                        Protocol = parts[0];
+                        Host = "";
+                        Path = new string[0];
+                        return true;
+                    }
                 }
             }
             return false;
@@ -63,7 +72,7 @@ namespace ArxOne.OneFilesystem
             if (localPathOrUri == @"\\")
             {
                 Protocol = Uri.UriSchemeFile;
-                Host = null;
+                Host = "";
                 Path = new string[0];
                 return true;
             }
@@ -129,12 +138,48 @@ namespace ArxOne.OneFilesystem
         {
             if (!string.Equals(Protocol, "file", StringComparison.InvariantCultureIgnoreCase))
                 return null;
+            if (Host == "")
+                return @"\\";
             var localpath = string.Join(@"\", Path);
             if (IsLocalHost)
                 return localpath;
             if (localpath == "")
                 return string.Format(@"\\{0}", Host);
             return string.Format(@"\\{0}\{1}", Host, localpath);
+        }
+
+        private bool LoadRootWin32(string localPathOrUri)
+        {
+            if (localPathOrUri != "")
+                return false;
+
+            Protocol = "";
+            Host = "";
+            Path = new string[0];
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the literal URI.
+        /// </summary>
+        /// <returns></returns>
+        private string GetLiteralUri()
+        {
+            return string.Format("{0}://{1}{2}{3}/{4}",
+                Protocol, Host ?? "",
+                Port.HasValue ? ":" : "", Port.HasValue ? Port.Value.ToString() : "",
+                string.Join("/", Path));
+        }
+
+        /// <summary>
+        /// Gets the literal root.
+        /// </summary>
+        /// <returns></returns>
+        private string GetLiteralRoot()
+        {
+            if (Protocol == "")
+                return "";
+            return null;
         }
     }
 }

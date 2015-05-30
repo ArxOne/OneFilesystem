@@ -76,6 +76,8 @@ namespace ArxOne.OneFilesystem
         /// <exception cref="System.NotSupportedException"></exception>
         private IOneProtocolFilesystem GetFilesystem(OnePath onePath)
         {
+            if (onePath.Protocol == "")
+                return null;
             IOneProtocolFilesystem filesystem;
             IList<IOneProtocolFilesystem> filesystems;
             if (_protocolFilesystemsByProtocol.TryGetValue(onePath.Protocol, out filesystems))
@@ -102,6 +104,8 @@ namespace ArxOne.OneFilesystem
         public IEnumerable<OneEntryInformation> GetChildren(OnePath directoryPath)
         {
             var filesystem = GetFilesystem(directoryPath);
+            if (filesystem == null)
+                return _protocolFilesystemsByProtocol.Keys.Select(p => new OneEntryInformation(p + "://", true));
             return filesystem.GetChildren(directoryPath);
         }
 
@@ -117,6 +121,8 @@ namespace ArxOne.OneFilesystem
             if (entryInformation != null)
                 return entryInformation;
             var filesystem = GetFilesystem(entryPath);
+            if (filesystem == null)
+                return new OneEntryInformation(entryPath, true);
             return filesystem.GetInformation(entryPath);
         }
 
@@ -130,6 +136,8 @@ namespace ArxOne.OneFilesystem
         public Stream OpenRead(OnePath filePath)
         {
             var filesystem = GetFilesystem(filePath);
+            if (filesystem == null)
+                return null;
             return filesystem.OpenRead(filePath);
         }
 
@@ -143,6 +151,8 @@ namespace ArxOne.OneFilesystem
         public bool Delete(OnePath entryPath)
         {
             var filesystem = GetFilesystem(entryPath);
+            if (filesystem == null)
+                return false;
             return filesystem.Delete(entryPath);
         }
 
@@ -156,6 +166,8 @@ namespace ArxOne.OneFilesystem
         public Stream CreateFile(OnePath filePath)
         {
             var filesystem = GetFilesystem(filePath);
+            if (filesystem == null)
+                return null;
             return filesystem.CreateFile(filePath);
         }
 
@@ -169,6 +181,8 @@ namespace ArxOne.OneFilesystem
         public bool CreateDirectory(OnePath directoryPath)
         {
             var filesystem = GetFilesystem(directoryPath);
+            if (filesystem == null)
+                return false;
             return filesystem.CreateDirectory(directoryPath);
         }
     }
