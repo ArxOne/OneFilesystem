@@ -93,5 +93,17 @@ namespace ArxOne.OneFilesystem.Test
                 var shares = oneFilesystem.GetChildren(aServer).ToList();
             }
         }
+
+        [TestMethod]
+        [TestCategory("File")]
+        [TestCategory("Local")]
+        public void FromToLiteralTest()
+        {
+            using (var fs = new OneFilesystem())
+            {
+                var rootFile = fs.GetChildren("").First(c => c.Protocol == "file");
+                var rootComputer = fs.GetChildren(rootFile.Literal).First();
+            }
+        }
     }
 }

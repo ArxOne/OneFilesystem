@@ -146,5 +146,23 @@ namespace ArxOne.OneFilesystem.Test
             Assert.AreEqual("", p.Host);
             Assert.AreEqual(0, p.Path.Count);
         }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void LocalhostRootTest()
+        {
+            var p = new OnePath(@"file://localhost");
+            Assert.AreEqual(@"\\?", p.Literal);
+        }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void LocalComputerTest()
+        {
+            var p = new OnePath(@"\\?");
+            Assert.AreEqual("file", p.Protocol);
+            Assert.AreEqual("localhost", p.Host);
+            Assert.AreEqual(0, p.Path.Count);
+        }
     }
 }

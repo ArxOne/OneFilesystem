@@ -9,7 +9,6 @@ namespace ArxOne.OneFilesystem
 {
     using System;
     using System.Linq;
-    using System.Threading;
 
     partial class OnePath
     {
@@ -90,6 +89,8 @@ namespace ArxOne.OneFilesystem
                 var server = localPathOrUri.Trim('\\');
                 if (!server.Contains('\\'))
                 {
+                    if (server == "?")
+                        server = Localhost;
                     Protocol = Uri.UriSchemeFile;
                     Host = server;
                     Path = new string[0];
@@ -140,7 +141,11 @@ namespace ArxOne.OneFilesystem
                 return @"\\";
             var localpath = string.Join(@"\", Path);
             if (IsLocalHost)
+            {
+                if (localpath == "")
+                    return @"\\?";
                 return localpath;
+            }
             if (localpath == "")
                 return string.Format(@"\\{0}", Host);
             return string.Format(@"\\{0}\{1}", Host, localpath);

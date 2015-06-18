@@ -20,4 +20,3 @@ using System.Reflection;
 [assembly: AssemblyCulture("")]
 
 [assembly: AssemblyVersion("0.3.2")]
-
