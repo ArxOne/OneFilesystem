@@ -10,8 +10,6 @@ namespace ArxOne.OneFilesystem.Protocols.File
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Net;
-    using System.Net.Sockets;
     using LanExchange.Network;
     using LanExchange.Network.Models;
 
