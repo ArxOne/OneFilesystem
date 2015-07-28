@@ -21,10 +21,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         /// <value>
         /// The protocol.
         /// </value>
-        public override string Protocol
-        {
-            get { return "ftpes"; }
-        }
+        public override string Protocol => "ftpes";
 
         /// <summary>
         /// Gets the FTP protocol.
@@ -32,10 +29,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         /// <value>
         /// The FTP protocol.
         /// </value>
-        protected override FtpProtocol FtpProtocol
-        {
-            get { return FtpProtocol.FtpES; }
-        }
+        protected override FtpProtocol FtpProtocol => FtpProtocol.FtpES;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpesProtocolFilesystem"/> class.

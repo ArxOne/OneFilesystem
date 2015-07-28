@@ -35,11 +35,7 @@ namespace ArxOne.OneFilesystem.Session
             lock (_sessions)
             {
                 while (_sessions.Count > 0)
-                {
-                    var session = _sessions.Dequeue() as IDisposable;
-                    if (session != null)
-                        session.Dispose();
-                }
+                    (_sessions.Dequeue() as IDisposable)?.Dispose();
             }
         }
 

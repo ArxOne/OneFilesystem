@@ -35,10 +35,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         /// <value>
         /// The protocol.
         /// </value>
-        public virtual string Protocol
-        {
-            get { return "ftp"; }
-        }
+        public virtual string Protocol => "ftp";
 
         /// <summary>
         /// Gets the FTP protocol.
@@ -46,7 +43,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         /// <value>
         /// The FTP protocol.
         /// </value>
-        protected virtual FtpProtocol FtpProtocol { get { return FtpProtocol.Ftp; } }
+        protected virtual FtpProtocol FtpProtocol => FtpProtocol.Ftp;
 
         /// <summary>
         /// Gets the default port.
@@ -54,7 +51,7 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         /// <value>
         /// The default port.
         /// </value>
-        protected virtual int DefaultPort { get { return 21; } }
+        protected virtual int DefaultPort => 21;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpProtocolFilesystem"/> class.
@@ -99,20 +96,14 @@ namespace ArxOne.OneFilesystem.Protocols.Ftp
         /// </summary>
         /// <param name="entryPath">The entry path.</param>
         /// <returns></returns>
-        public bool Handle(OnePath entryPath)
-        {
-            return true;
-        }
+        public bool Handle(OnePath entryPath) => true;
 
         /// <summary>
         /// Gets the local path.
         /// </summary>
         /// <param name="entryPath">The entry path.</param>
         /// <returns></returns>
-        private static string GetLocalPath(OnePath entryPath)
-        {
-            return "/" + string.Join("/", entryPath.Path);
-        }
+        private static string GetLocalPath(OnePath entryPath) => "/" + string.Join("/", entryPath.Path);
 
         /// <summary>
         /// Creates the entry information.

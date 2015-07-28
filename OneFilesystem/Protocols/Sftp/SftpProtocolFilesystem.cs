@@ -35,10 +35,7 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
         /// <value>
         /// The protocol.
         /// </value>
-        public string Protocol
-        {
-            get { return "sftp"; }
-        }
+        public string Protocol => "sftp";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SftpProtocolFilesystem"/> class.
@@ -63,10 +60,7 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
         /// </summary>
         /// <param name="entryPath">The entry path.</param>
         /// <returns></returns>
-        public bool Handle(OnePath entryPath)
-        {
-            return true;
-        }
+        public bool Handle(OnePath entryPath) => true;
 
         /// <summary>
         /// Gets the client for given path.
@@ -123,10 +117,7 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
         /// </summary>
         /// <param name="entryPath">The entry path.</param>
         /// <returns></returns>
-        private static string GetLocalPath(OnePath entryPath)
-        {
-            return "/" + string.Join("/", entryPath.Path);
-        }
+        private static string GetLocalPath(OnePath entryPath) => "/" + string.Join("/", entryPath.Path);
 
         /// <summary>
         /// Creates the entry.
@@ -134,11 +125,9 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
         /// <param name="path">The path.</param>
         /// <param name="file">The file.</param>
         /// <returns></returns>
-        private static OneEntryInformation CreateEntry(OnePath path, SftpFile file)
-        {
-            return new OneEntryInformation(path, file.IsDirectory, file.IsDirectory ? (long?)null : file.Length, null,
-                file.LastWriteTimeUtc, file.LastAccessTimeUtc);
-        }
+        private static OneEntryInformation CreateEntry(OnePath path, SftpFile file) 
+            => new OneEntryInformation(path, file.IsDirectory, file.IsDirectory ? (long?)null : file.Length, null,
+            file.LastWriteTimeUtc, file.LastAccessTimeUtc);
 
         /// <summary>
         /// Enumerates the entries.

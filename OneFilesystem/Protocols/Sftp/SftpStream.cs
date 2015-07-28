@@ -32,9 +32,6 @@ namespace ArxOne.OneFilesystem.Protocols.Sftp
         /// <param name="func">The function.</param>
         /// <returns></returns>
         /// <exception cref="ArxOne.OneFilesystem.Exceptions.OneFilesystemTransportException"></exception>
-        protected override TResult Translate<TResult>(Func<TResult> func)
-        {
-            return SftpProtocolFilesystem.Process(func);
-        }
+        protected override TResult Translate<TResult>(Func<TResult> func) => SftpProtocolFilesystem.Process(func);
     }
 }

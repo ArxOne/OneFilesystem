@@ -33,10 +33,7 @@ namespace ArxOne.OneFilesystem.Protocols.File
         /// <value>
         /// The protocol.
         /// </value>
-        public string Protocol
-        {
-            get { return "file"; }
-        }
+        public string Protocol => "file";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileProtocolFilesystem"/> class.
@@ -57,10 +54,7 @@ namespace ArxOne.OneFilesystem.Protocols.File
         /// </summary>
         /// <param name="entryPath">The entry path.</param>
         /// <returns></returns>
-        public bool Handle(OnePath entryPath)
-        {
-            return entryPath.Protocol == Protocol;
-        }
+        public bool Handle(OnePath entryPath) => entryPath.Protocol == Protocol;
 
         /// <summary>
         /// Gets the type of the node.
@@ -153,10 +147,8 @@ namespace ArxOne.OneFilesystem.Protocols.File
         /// </summary>
         /// <param name="directoryPath">The directory path.</param>
         /// <returns></returns>
-        private static IEnumerable<OneEntryInformation> GetLocalComputerChildren(OnePath directoryPath)
-        {
-            return DriveInfo.GetDrives().Select(d => CreateEntryInformation(directoryPath + d.Name, d.Name, true));
-        }
+        private static IEnumerable<OneEntryInformation> GetLocalComputerChildren(OnePath directoryPath) 
+            => DriveInfo.GetDrives().Select(d => CreateEntryInformation(directoryPath + d.Name, d.Name, true));
 
         /// <summary>
         /// Gets the network servers.

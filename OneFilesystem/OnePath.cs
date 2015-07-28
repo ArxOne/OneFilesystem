@@ -39,10 +39,7 @@ namespace ArxOne.OneFilesystem
         /// Determines whether this path is localhost.
         /// </summary>
         /// <returns></returns>
-        public bool IsLocalHost
-        {
-            get { return Host != null && string.Equals(Host, Localhost, StringComparison.InvariantCultureIgnoreCase); }
-        }
+        public bool IsLocalHost => Host != null && string.Equals(Host, Localhost, StringComparison.InvariantCultureIgnoreCase);
 
         /// <summary>
         /// Gets the port.
@@ -81,13 +78,7 @@ namespace ArxOne.OneFilesystem
         /// <value>
         /// The URI.
         /// </value>
-        public Uri Uri
-        {
-            get
-            {
-                return new Uri(GetLiteralUri());
-            }
-        }
+        public Uri Uri => new Uri(GetLiteralUri());
 
         /// <summary>
         /// Gets the literal path.
@@ -95,10 +86,7 @@ namespace ArxOne.OneFilesystem
         /// <value>
         /// The literal.
         /// </value>
-        public string Literal
-        {
-            get { return GetLiteralRoot() ?? GetLiteralWin32() ?? GetLiteralUri(); }
-        }
+        public string Literal => GetLiteralRoot() ?? GetLiteralWin32() ?? GetLiteralUri();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OnePath"/> class.
@@ -108,7 +96,7 @@ namespace ArxOne.OneFilesystem
         public OnePath(Uri uri)
         {
             if (uri == null)
-                throw new ArgumentNullException("uri");
+                throw new ArgumentNullException(nameof(uri));
 
             Init(uri);
         }
@@ -121,7 +109,7 @@ namespace ArxOne.OneFilesystem
         public OnePath(string localPathOrUri)
         {
             if (localPathOrUri == null)
-                throw new ArgumentNullException("localPathOrUri");
+                throw new ArgumentNullException(nameof(localPathOrUri));
 
             if (LoadUri(localPathOrUri)
                || LoadRootWin32(localPathOrUri) || LoadNetworkRootWin32(localPathOrUri) || LoadNetworkServerWin32(localPathOrUri) || LoadWin32(localPathOrUri))
@@ -248,10 +236,7 @@ namespace ArxOne.OneFilesystem
         /// <returns>
         /// The result of the conversion.
         /// </returns>
-        public static implicit operator OnePath(Uri uri)
-        {
-            return new OnePath(uri);
-        }
+        public static implicit operator OnePath(Uri uri) => new OnePath(uri);
 
         /// <summary>
         /// Performs an implicit conversion from <see cref="System.String"/> to <see cref="OnePath"/>.
@@ -260,9 +245,6 @@ namespace ArxOne.OneFilesystem
         /// <returns>
         /// The result of the conversion.
         /// </returns>
-        public static implicit operator OnePath(string pathOrUri)
-        {
-            return new OnePath(pathOrUri);
-        }
+        public static implicit operator OnePath(string pathOrUri) => new OnePath(pathOrUri);
     }
 }

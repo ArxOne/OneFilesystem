@@ -136,9 +136,7 @@ namespace ArxOne.OneFilesystem
         public Stream OpenRead(OnePath filePath)
         {
             var filesystem = GetFilesystem(filePath);
-            if (filesystem == null)
-                return null;
-            return filesystem.OpenRead(filePath);
+            return filesystem?.OpenRead(filePath);
         }
 
         /// <summary>
@@ -166,9 +164,7 @@ namespace ArxOne.OneFilesystem
         public Stream CreateFile(OnePath filePath)
         {
             var filesystem = GetFilesystem(filePath);
-            if (filesystem == null)
-                return null;
-            return filesystem.CreateFile(filePath);
+            return filesystem?.CreateFile(filePath);
         }
 
         /// <summary>

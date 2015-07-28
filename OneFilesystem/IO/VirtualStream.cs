@@ -21,34 +21,22 @@ namespace ArxOne.OneFilesystem.IO
         /// <summary>
         /// When overridden in a derived class, gets a value indicating whether the current stream supports reading.
         /// </summary>
-        public override bool CanRead
-        {
-            get { return _innerStream.CanRead; }
-        }
+        public override bool CanRead => _innerStream.CanRead;
 
         /// <summary>
         /// When overridden in a derived class, gets a value indicating whether the current stream supports seeking.
         /// </summary>
-        public override bool CanSeek
-        {
-            get { return _innerStream.CanSeek; }
-        }
+        public override bool CanSeek => _innerStream.CanSeek;
 
         /// <summary>
         /// When overridden in a derived class, gets a value indicating whether the current stream supports writing.
         /// </summary>
-        public override bool CanWrite
-        {
-            get { return _innerStream.CanWrite; }
-        }
+        public override bool CanWrite => _innerStream.CanWrite;
 
         /// <summary>
         /// When overridden in a derived class, gets the length in bytes of the stream.
         /// </summary>
-        public override long Length
-        {
-            get { return _innerStream.Length; }
-        }
+        public override long Length => _innerStream.Length;
 
         /// <summary>
         /// When overridden in a derived class, gets or sets the position within the current stream.
@@ -78,19 +66,14 @@ namespace ArxOne.OneFilesystem.IO
             if (disposing)
             {
                 _innerStream.Dispose();
-                var onDisposed = Disposed;
-                if (onDisposed != null)
-                    onDisposed(this, EventArgs.Empty);
+                Disposed?.Invoke(this, EventArgs.Empty);
             }
         }
 
         /// <summary>
         /// When overridden in a derived class, clears all buffers for this stream and causes any buffered data to be written to the underlying device.
         /// </summary>
-        public override void Flush()
-        {
-            _innerStream.Flush();
-        }
+        public override void Flush() => _innerStream.Flush();
 
         /// <summary>
         /// When overridden in a derived class, sets the position within the current stream.
@@ -100,19 +83,13 @@ namespace ArxOne.OneFilesystem.IO
         /// <returns>
         /// The new position within the current stream.
         /// </returns>
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            return _innerStream.Seek(offset, origin);
-        }
+        public override long Seek(long offset, SeekOrigin origin) => _innerStream.Seek(offset, origin);
 
         /// <summary>
         /// When overridden in a derived class, sets the length of the current stream.
         /// </summary>
         /// <param name="value">The desired length of the current stream in bytes.</param>
-        public override void SetLength(long value)
-        {
-            _innerStream.SetLength(value);
-        }
+        public override void SetLength(long value) => _innerStream.SetLength(value);
 
         /// <summary>
         /// When overridden in a derived class, reads a sequence of bytes from the current stream and advances the position within the stream by the number of bytes read.
@@ -123,10 +100,7 @@ namespace ArxOne.OneFilesystem.IO
         /// <returns>
         /// The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many bytes are not currently available, or zero (0) if the end of the stream has been reached.
         /// </returns>
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            return _innerStream.Read(buffer, offset, count);
-        }
+        public override int Read(byte[] buffer, int offset, int count) => _innerStream.Read(buffer, offset, count);
 
         /// <summary>
         /// When overridden in a derived class, writes a sequence of bytes to the current stream and advances the current position within this stream by the number of bytes written.
@@ -134,9 +108,6 @@ namespace ArxOne.OneFilesystem.IO
         /// <param name="buffer">An array of bytes. This method copies <paramref name="count" /> bytes from <paramref name="buffer" /> to the current stream.</param>
         /// <param name="offset">The zero-based byte offset in <paramref name="buffer" /> at which to begin copying bytes to the current stream.</param>
         /// <param name="count">The number of bytes to be written to the current stream.</param>
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            _innerStream.Write(buffer, offset, count);
-        }
+        public override void Write(byte[] buffer, int offset, int count) => _innerStream.Write(buffer, offset, count);
     }
 }
