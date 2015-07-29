@@ -124,7 +124,8 @@ namespace ArxOne.OneFilesystem
                 throw new ArgumentNullException("localPathOrUri");
 
             if (LoadUri(localPathOrUri)
-               || LoadRootWin32(localPathOrUri) || LoadNetworkRootWin32(localPathOrUri) || LoadNetworkServerWin32(localPathOrUri) || LoadWin32(localPathOrUri))
+               || LoadRootWin32(localPathOrUri) || LoadNetworkRootWin32(localPathOrUri) || LoadNetworkServerWin32(localPathOrUri)
+               || LoadDriveRootWin32(localPathOrUri) || LoadWin32(localPathOrUri))
                 return;
 
             throw new ArgumentException("localPathOrUri");

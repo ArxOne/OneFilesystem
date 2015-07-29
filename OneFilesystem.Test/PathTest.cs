@@ -164,5 +164,16 @@ namespace ArxOne.OneFilesystem.Test
             Assert.AreEqual("localhost", p.Host);
             Assert.AreEqual(0, p.Path.Count);
         }
+
+        [TestMethod]
+        [TestCategory("Path")]
+        public void LiteralDriveTest()
+        {
+            var p = new OnePath("C:");
+            Assert.AreEqual("file", p.Protocol);
+            Assert.AreEqual("localhost", p.Host);
+            Assert.AreEqual(1, p.Path.Count);
+            Assert.AreEqual("C:", p.Path[0]);
+        }
     }
 }

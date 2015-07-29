@@ -184,5 +184,22 @@ namespace ArxOne.OneFilesystem
                 return "";
             return null;
         }
+
+        /// <summary>
+        /// Loads the drive root (win32).
+        /// </summary>
+        /// <param name="localPath">The local path.</param>
+        /// <returns></returns>
+        private bool LoadDriveRootWin32(string localPath)
+        {
+            if (localPath.Length == 2 && localPath[1] == ':')
+            {
+                Protocol = Uri.UriSchemeFile;
+                Host = Localhost;
+                Path = new[] { localPath };
+                return true;
+            }
+            return false;
+        }
     }
 }
